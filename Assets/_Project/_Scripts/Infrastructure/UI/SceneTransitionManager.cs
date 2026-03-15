@@ -33,7 +33,7 @@ namespace ACT.Scripts
             }
 
             _view.UpdateProgress(1);
-            await UniTask.Delay(200);
+            await UniTask.Delay(500);
 
             op.allowSceneActivation = true;
             while (!op.isDone) await UniTask.Yield();

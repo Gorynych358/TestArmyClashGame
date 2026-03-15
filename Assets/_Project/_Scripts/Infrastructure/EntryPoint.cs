@@ -1,5 +1,6 @@
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
+using UnityEngine;
 
 namespace ACT.Scripts
 {
@@ -21,7 +22,12 @@ namespace ACT.Scripts
 
         public void Start()
         {
-            UnityEngine.Debug.Log("GameInitialized!");
+            //The entry point of the application. 
+            //Global services initializtion, 
+            //remote data loading, authentication etc.
+            Application.targetFrameRate = 60;
+            if(Application.isEditor)
+                Debug.Log("Game initialized!");
             _soundManager.PlayMusic(_audioLibrary.GetClip("BackgroundMusicLoop"));
             _sceneTransitionManager.LoadMainMenu().Forget();
         }

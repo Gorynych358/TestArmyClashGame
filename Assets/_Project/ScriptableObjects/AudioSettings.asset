@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cf465e625f5df6b4aaaa36d814196856, type: 3}
   m_Name: AudioSettings
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.AudioSettings
-  MusicVolume: 1
-  SfxVolume: 1
+  MusicVolume: 0.168
+  SfxVolume: 0.327
   SoundEnabled: 1
