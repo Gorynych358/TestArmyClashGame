@@ -13,7 +13,7 @@ namespace ACT.Scripts
         [Header("Base Stats")]
         [SerializeField] private int _baseHP = 100;
         [SerializeField] private int _baseATK = 10;
-        [SerializeField] private float _baseSPEED = 10f;
+        [SerializeField] private float _baseSPEED = 5f;
         [SerializeField] private float _baseATKSPD = 1f;
 
         public int BaseHP => _baseHP;
@@ -70,7 +70,7 @@ namespace ACT.Scripts
             // Считаем DPS
             float dps = FinalATK * (1f + 0.25f * FinalATKSPD);
 
-            // Считаем EHP (Effective HP) с учетом скорости (быстрых юнитов сложнее убить)
+            // Считаем EHP (Effective HP)
             float ehp = FinalHP * (1f + FinalSPEED / 20f);
 
             // Power Score - считаем финальный показатель, который учитывает и урон, и выживаемость

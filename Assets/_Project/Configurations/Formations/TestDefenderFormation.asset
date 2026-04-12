@@ -1,0 +1,55 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d859bdfb3fee5584b8c9d75d995b5b1f, type: 3}
+  m_Name: TestDefenderFormation
+  m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.FormationDataSO
+  _formationName: TestDefenderFormation
+  _columns: 3
+  _rows: 6
+  _cells:
+  - HasUnit: 1
+    UnitType: 0
+  - HasUnit: 1
+    UnitType: 3
+  - HasUnit: 1
+    UnitType: 2
+  - HasUnit: 1
+    UnitType: 4
+  - HasUnit: 0
+    UnitType: 0
+  - HasUnit: 1
+    UnitType: 5
+  - HasUnit: 0
+    UnitType: 0
+  - HasUnit: 1
+    UnitType: 6
+  - HasUnit: 0
+    UnitType: 0
+  - HasUnit: 1
+    UnitType: 7
+  - HasUnit: 1
+    UnitType: 6
+  - HasUnit: 1
+    UnitType: 7
+  - HasUnit: 1
+    UnitType: 10
+  - HasUnit: 1
+    UnitType: 10
+  - HasUnit: 1
+    UnitType: 10
+  - HasUnit: 1
+    UnitType: 11
+  - HasUnit: 1
+    UnitType: 11
+  - HasUnit: 1
+    UnitType: 11
+  _cellSpacing: {x: 2, y: 2}

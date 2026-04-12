@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.ColorModifierSO
   _hp: -50
   _atk: 20
-  _speed: -5
+  _speed: -1
   _atkspeed: 0
   _colorType: 1
   _colorDef: {r: 0.019625777, g: 0.2830189, b: 0.01735494, a: 1}
