@@ -20,8 +20,8 @@ namespace ACT.Scripts
                 throw new ArgumentNullException(nameof(formationConfig));
 
             var units = new List<Unit>();
-            Vector3 facingDirection = armyType == ArmyTypes.Inviders ? Vector3.left : Vector3.right;
-            float sideSign = armyType == ArmyTypes.Inviders ? 1f : -1f;
+            Vector3 facingDirection = armyType == ArmyTypes.Invaders ? Vector3.left : Vector3.right;
+            float sideSign = armyType == ArmyTypes.Invaders ? 1f : -1f;
 
             float formationHalfWidth = (formationConfig.Rows - 1) * formationConfig.CellSpacing.y * 0.5f;
             Vector3 armyOrigin = origin + Vector3.right * sideSign * (formationHalfWidth + _formationGap);
@@ -41,7 +41,7 @@ namespace ACT.Scripts
                     Unit unit = _unitPool.Get(cell.UnitType, parent);
                     if (unit == null)
                         continue;
-
+                    unit.ArmyType = armyType;
                     unit.transform.position = worldPosition;
                     unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
                     unit.name = $"{armyType}_{row}_{column}_{cell.UnitType}";
@@ -52,5 +52,22 @@ namespace ACT.Scripts
             return units;
         }
 
+        public List<Unit> CreateRandomArmy(ArmyTypes armyType, int count, Transform parent = null, Vector3 origin = default)
+        {
+            var units = new List<Unit>();
+            Vector3 facingDirection = armyType == ArmyTypes.Invaders ? Vector3.left : Vector3.right;
+
+            for (int i = 0; i < count; i++)
+            {
+                var unit = _unitPool.Get((UnitTypes)UnityEngine.Random.Range(0, 11), parent);
+                unit.ArmyType = armyType;
+                unit.transform.position = origin + new Vector3(0, 0, i * 2.5f);
+                unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
+                unit.name = $"{armyType}_{i}_{unit.UnitType}";
+                units.Add(unit);
+            }
+
+            return units;
+        }
     }
 }

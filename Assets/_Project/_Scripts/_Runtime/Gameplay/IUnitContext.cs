@@ -6,6 +6,7 @@ namespace ACT.Scripts
 
     public interface IUnitContext
     {
+        ArmyTypes ArmyType { get; }
         Transform Transform { get; }
 
         Vector3 MoveDirection { get;set;}

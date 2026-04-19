@@ -5,7 +5,7 @@ namespace ACT.Scripts
 {
 
     [CustomEditor(typeof(UnitConfigSO))]
-    public class UnitConfigSOEditor : Editor
+    public class UnitConfigSOEditor : UnityEditor.Editor
     {
         public override void OnInspectorGUI()
         {

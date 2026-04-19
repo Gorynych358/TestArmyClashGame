@@ -1,22 +1,17 @@
 using System;
 using UnityEngine;
+using VContainer;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace ACT.Scripts
 {
-    public class BattleManager
+    public class BattleManager : MonoBehaviour
     {
-        public Transform BattleField { get; set; }
-        public Transform PoolStorage { get; set; }
-        public FormationDataSO DefenderFormation { get; set; }
-        public FormationDataSO InvaderFormation { get; set; }
-
-        private UnitObjectPool _pool;
-        private FormationGenerator _formationGenerator;
-        private IEventBus _eventBus;
-
-        private readonly List<Unit> _defenders = new();
-        private readonly List<Unit> _enemies = new();
+        [SerializeField] private Transform _battleField;
+        [SerializeField] private Transform _poolStorage;
+        [SerializeField] private FormationDataSO _defenderFormation;
+        [SerializeField] private FormationDataSO _inviderFormation;
 
         [Header("Spawn Settings")]
         [SerializeField] private int defendersCount = 10;
@@ -25,50 +20,57 @@ namespace ACT.Scripts
         [SerializeField] private Vector3 defendersSpawnPoint = new Vector3(-5, 0, 0);
         [SerializeField] private Vector3 enemiesSpawnPoint = new Vector3(5, 0, 0);
 
+        private readonly List<Unit> _defenders = new();
+        private readonly List<Unit> _enemies = new();
+
+        private UnitObjectPool _pool;
+        private FormationGenerator _formationGenerator;
+        private IEventBus _eventBus;
+        private SpatialGrid _spatialGrid;
         private bool _battleActive = false;
 
-        public void Initialize(UnitObjectPool pool, FormationGenerator formationGenerator, IEventBus eventBus)
+        public void Initialize(UnitObjectPool pool, FormationGenerator formationGenerator, IEventBus eventBus, SpatialGrid spatialGrid)
         {
-            _pool = pool ?? throw new ArgumentNullException(nameof(pool));
-            _formationGenerator = formationGenerator ?? throw new ArgumentNullException(nameof(formationGenerator));
-            _eventBus = eventBus ?? throw new ArgumentNullException(nameof(eventBus));
-
-            _eventBus.Subscribe<BattleStartEvent>(OnBattleStart);
-            _eventBus.Subscribe<UnitDeadEvent>(HandleUnitDied);
-
-            if (PoolStorage != null)
-            {
-                _pool.InitializePool(10, PoolStorage);
-            }
-            else
-            {
-                Debug.LogWarning("BattleManager: PoolStorage is not assigned before Initialize.");
-            }
+            _pool = pool;
+            _formationGenerator = formationGenerator;
+            _eventBus = eventBus;
+            _spatialGrid = spatialGrid;
+            print("BattleManager initialized with pool, formation generator, and event bus.");
         }
 
-        public void GenerateArmies()
+        private void Start()
         {
-            if (BattleField == null)
-            {
-                Debug.LogWarning("BattleManager: BattleField is not assigned before GenerateArmies.");
-            }
-
+            _pool.InitializePool(10, _poolStorage);
             SpawnArmies(3000);
+            _eventBus.Subscribe<FightButtonClickedEvent>(OnBattleStart);
+            _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
             _eventBus.Publish(new BattleReadyEvent());
+            print($"Defender = {_defenders[0].name}, closest enemy = {GetClosestEnemy(_defenders[0])}");
+        }
 
-            if (_defenders.Count > 0)
-                Debug.Log($"Defender = {_defenders[0].name}, closest enemy = {GetClosestEnemy(_defenders[0])}");
+        private void Update()
+        {
+            if(!_battleActive)
+                return;
+            _spatialGrid.Clear();
+            _spatialGrid.Build(_defenders, _enemies);
+        }
+
+        private void OnDisable()
+        {
+            _eventBus.Unsubscribe<FightButtonClickedEvent>(OnBattleStart);
+            _eventBus.Unsubscribe<UnitDiedEvent>(OnUnitDied);
         }
 
         // --------------------------------------------------------------------
         // BATTLE START
         // --------------------------------------------------------------------
-        private void OnBattleStart(BattleStartEvent evt)
+        private void OnBattleStart(FightButtonClickedEvent evt)
         {
             if (_battleActive)
                 return;
-
             _battleActive = true;
+            _eventBus.Publish(new BattleStartEvent());
         }
 
         // --------------------------------------------------------------------
@@ -84,7 +86,7 @@ namespace ACT.Scripts
             var defenders = CreateArmy(ArmyTypes.Defenders, _defenderFormation, _battleField, defendersSpawnPoint, out defendersPower);
             _defenders.AddRange(defenders);
 
-            var inviders = CreateArmy(ArmyTypes.Inviders, _inviderFormation, _battleField, enemiesSpawnPoint, out invidersPower);
+            var inviders = CreateArmy(ArmyTypes.Invaders, _inviderFormation, _battleField, enemiesSpawnPoint, out invidersPower);
             _enemies.AddRange(inviders);
 
             print($"Defender power/count = {defendersPower}/{_defenders.Count}, inviders power/count = {invidersPower}/{_enemies.Count}");
@@ -101,13 +103,13 @@ namespace ACT.Scripts
                 }
                 else
                 {
-                    units = CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
+                    units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
                 }
             }
             catch (Exception ex)
             {
                 Debug.LogWarning($"Formation generation failed for {armyType}: {ex.Message}. Falling back to random spawn.");
-                units = CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
+                units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
             }
 
             totalPower = 0f;
@@ -120,25 +122,15 @@ namespace ACT.Scripts
             return units;
         }
 
-        private List<Unit> CreateRandomArmy(ArmyTypes armyType, int count, Transform parent, Vector3 origin)
-        {
-            var units = new List<Unit>();
-            Vector3 facingDirection = armyType == ArmyTypes.Inviders ? Vector3.left : Vector3.right;
-
-            for (int i = 0; i < count; i++)
-            {
-                var unit = _pool.Get((UnitTypes)UnityEngine.Random.Range(0, 11), parent);
-                unit.transform.position = origin + new Vector3(0, 0, i * 2.5f);
-                unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
-                unit.name = $"{armyType}_{i}_{unit.UnitType}";
-                units.Add(unit);
-            }
-
-            return units;
-        }
-
         private void ClearArmies()
         {
+            //Возвращаем всех юнитов в пул и очищаем списки армий:
+            foreach (var unit in _defenders)
+                _pool.Return(unit);
+
+            foreach (var unit in _enemies)
+                _pool.Return(unit);
+            
             _defenders.Clear();
             _enemies.Clear();
         }
@@ -146,9 +138,9 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         // UNIT DIED EVENT
         // --------------------------------------------------------------------
-        private void HandleUnitDied(UnitDeadEvent evt)
+        private void OnUnitDied(UnitDiedEvent evt)
         {
-            print($"Battle active = {_battleActive}, Unit {evt.Unit.name} is dead!");
+            //print($"Battle active = {_battleActive}, Unit {evt.Unit.name} is dead!");
             /*if (!_battleActive)
                 return;*/
 
@@ -170,19 +162,19 @@ namespace ACT.Scripts
 
             if (_defenders.Count == 0 && _enemies.Count == 0)
             {
-                EndBattle(false); // ничья
+                StartCoroutine(EndBattle(false)); // ничья
                 return;
             }
 
             if (_defenders.Count == 0)
             {
-                EndBattle(false); // поражение игрока
+                StartCoroutine(EndBattle(false)); // поражение игрока
                 return;
             }
 
             if (_enemies.Count == 0)
             {
-                EndBattle(true); // победа игрока
+                StartCoroutine(EndBattle(true)); // победа игрока
                 return;
             }
         }
@@ -190,7 +182,7 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         // END BATTLE
         // --------------------------------------------------------------------
-        private void EndBattle(bool playerWon)
+        private IEnumerator EndBattle(bool playerWon)
         {
             _battleActive = false;
 
@@ -203,15 +195,16 @@ namespace ACT.Scripts
                     unit.ChangeState(UnitStates.Victory);
             }
 
+            yield return new WaitForSeconds(2f);
+
             // 2. UI результата
-            //BattleUI.Instance.ShowResult(playerWon);
+            if(playerWon)
+                print("FIGHT COMPLETE! \n Player won!");
+            else
+                print("FIGHT COMPLETE! \n Invaders won!");
+            
 
-            // 3. Возврат всех юнитов в пул
-            foreach (var unit in _defenders)
-                _pool.Return(unit);
-
-            foreach (var unit in _enemies)
-                _pool.Return(unit);
+            yield return new WaitForSeconds(1f);
 
             ClearArmies();
         }
@@ -219,24 +212,34 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         // GET CLOSEST ENEMY
         // --------------------------------------------------------------------
+        // ------------------------------------------------------------
+        // Ищем ближайшего врага по ArmyType (чисто, без списков)
+        // ------------------------------------------------------------
         public Unit GetClosestEnemy(IUnitContext requester)
         {
-            var myUnit = requester as Unit;
-            if (myUnit == null)
+            if (requester is not Unit unit)
                 return null;
 
-            bool isDefender = _defenders.Contains(myUnit);
-            var enemyList = isDefender ? _enemies : _defenders;
+            List<Unit> enemyList = requester.ArmyType switch
+            {
+                ArmyTypes.Defenders => _enemies,
+                ArmyTypes.Invaders  => _defenders,
+                _                   => null
+            };
+
+            if (enemyList == null)
+                return null;
 
             Unit closest = null;
-            float minDist = Mathf.Infinity;
+            float minDist = float.MaxValue;
+            Vector3 pos = unit.Transform.position;
 
             foreach (var enemy in enemyList)
             {
-                if (enemy == null || !enemy.gameObject.activeSelf)
+                if (enemy == null || !enemy.IsAlive)
                     continue;
 
-                float dist = Vector3.Distance(myUnit.Transform.position, enemy.Transform.position);
+                float dist = (enemy.Transform.position - pos).sqrMagnitude;
                 if (dist < minDist)
                 {
                     minDist = dist;
@@ -245,6 +248,17 @@ namespace ACT.Scripts
             }
 
             return closest;
+        }
+
+        // ------------------------------------------------------------
+        // Ищем локальных соседей через SpatialGrid
+        // ------------------------------------------------------------
+        public List<Unit> GetNeighbors(IUnitContext requester)
+        {
+            if (requester is not Unit unit)
+                return new List<Unit>(0);
+
+            return _spatialGrid.GetNeighbors(requester.Transform.position);
         }
     }
 }

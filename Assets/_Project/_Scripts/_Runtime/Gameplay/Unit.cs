@@ -9,6 +9,7 @@ namespace ACT.Scripts
 
         [SerializeField] Transform _modelRoot;
     #region PUBLIC PROPERTIES
+        public ArmyTypes ArmyType{get;set;}
         public Transform ModelRoot => _modelRoot;
         public Transform Transform => transform;
         public UnitTypes UnitType => _config.UnitType;
@@ -87,7 +88,7 @@ namespace ACT.Scripts
             _isBattleStarted = true;
         }
 
-        private void Update()
+        public void Update()
         {
             if(!_isBattleStarted)
                 return;
@@ -117,7 +118,7 @@ namespace ACT.Scripts
 
         public void DispatchDeadEvent()
         {
-            _eventBus.Publish(new UnitDeadEvent(this));
+            _eventBus.Publish(new UnitDiedEvent(this));
         }
 
         private void OnEnable() 

@@ -4,7 +4,7 @@ using UnityEditor;
 namespace ACT.Scripts
 {
     [CustomEditor(typeof(FormationDataSO))]
-    public class FormationDataSOInspector : Editor
+    public class FormationDataSOInspector : UnityEditor.Editor
     {
         //Цвет пустой ячейки:
         private static readonly Color EmptyColor = new Color(0.25f, 0.25f, 0.25f);

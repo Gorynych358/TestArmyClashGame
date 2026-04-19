@@ -7,7 +7,13 @@ namespace ACT.Scripts
     {
         protected override void Configure(IContainerBuilder builder)
         {
-            
+            builder.RegisterComponentInHierarchy<MainMenuManager>();
+            //UI view:
+            builder.RegisterComponentInHierarchy<PlayButtonView>();
+            //UI presenter:
+            builder.Register<PlayButtonPresenter>(Lifetime.Singleton);
+            //Scene context entry point:
+            builder.RegisterEntryPoint<MainMenuBootstrap>();
         }
     }
 }

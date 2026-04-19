@@ -2,7 +2,7 @@ using System;
 using UnityEditor;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Scripts.Editor
 {
     public class FormationEditorWindow : EditorWindow
     {
