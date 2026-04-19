@@ -4,18 +4,18 @@ using UnityEngine;
 
 namespace ACT.Scripts
 {
-    public sealed class EntryPoint : IStartable
+    public sealed class AppEntryPoint : IStartable
     {
         private readonly ISceneTransitionManager _sceneTransitionManager;
         private readonly AudioLibrary _audioLibrary;
         private readonly ISoundManager _soundManager;
 
-        public EntryPoint(
-            ISceneTransitionManager scenes, 
+        public AppEntryPoint(
+            ISceneTransitionManager sceneTransition, 
             AudioLibrary audioLibrary,
             ISoundManager soundManager)
         {
-            _sceneTransitionManager = scenes;
+            _sceneTransitionManager = sceneTransition;
             _audioLibrary = audioLibrary;
             _soundManager = soundManager;
         }

@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.UnitConfigSO
   _unitType: 9
   _baseHP: 100
-  _baseATK: 10
+  _baseATK: 30
   _baseSPEED: 3
   _baseATKSPD: 1
   _provider: {fileID: 11400000, guid: 896360de5c1396a4e8bcecb8f8331691, type: 2}

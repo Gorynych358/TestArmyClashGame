@@ -195,7 +195,6 @@ GameObject:
   - component: {fileID: 853980996}
   - component: {fileID: 853980995}
   - component: {fileID: 853980994}
-  - component: {fileID: 853980998}
   m_Layer: 5
   m_Name: Canvas
   m_TagString: Untagged
@@ -287,18 +286,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
---- !u!114 &853980998
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 853980993}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c7f65adb6b406be43b98809e7048cd1b, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.MainMenuUI
 --- !u!1 &1001746283
 GameObject:
   m_ObjectHideFlags: 0
@@ -858,7 +845,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1816807854}
-  - component: {fileID: 1816807853}
+  - component: {fileID: 1816807855}
   m_Layer: 0
   m_Name: MainMenuScope
   m_TagString: Untagged
@@ -866,23 +853,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1816807853
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1816807852}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e0a2d2ea6ec8e884a84eea1a81183f83, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.MainMenuLifetimeScope
-  parentReference:
-    TypeName: 
-  autoRun: 1
-  autoInjectGameObjects:
-  - {fileID: 1790843130}
 --- !u!4 &1816807854
 Transform:
   m_ObjectHideFlags: 0
@@ -892,13 +862,29 @@ Transform:
   m_GameObject: {fileID: 1816807852}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 933.072, y: 559.50195, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1790843131}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1816807855
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1816807852}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a30c2d0bbcab03a40895de0be17b4b5b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.MainMenuLifetimeScope
+  parentReference:
+    TypeName: 
+  autoRun: 1
+  autoInjectGameObjects: []
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

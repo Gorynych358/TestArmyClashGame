@@ -2,7 +2,7 @@ using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace ACT.Scripts
+namespace ACT.Scripts.Runtime.DI
 {
     
     public sealed class RootLifetimeScope : LifetimeScope
@@ -22,8 +22,10 @@ namespace ACT.Scripts
             builder.RegisterComponentInHierarchy<SceneTransitionView>();
             //Менеджер перехода между сценами. Асинхронная загрузка сцен + UniTask-и:
             builder.Register<ISceneTransitionManager, SceneTransitionManager>(Lifetime.Singleton);
+            //Экономика игры, монетки, ресурсы и т.п.:
+            builder.Register<IEconomyManager, EconomyManager>(Lifetime.Singleton);
             //Точка входа в приложение. 
-            builder.RegisterEntryPoint<EntryPoint>();
+            builder.RegisterEntryPoint<AppEntryPoint>();
         }
     }
 }

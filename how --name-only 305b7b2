@@ -1,0 +1,25 @@
+[33m6c3c1bb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{0}: reset: moving to HEAD~1
+[33mf4b85e4[m HEAD@{1}: reset: moving to HEAD~2
+[33m8917402[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{2}: reset: moving to HEAD
+[33m8917402[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{3}: checkout: moving from 305b7b288a810aa950335a9480b0df5fc6933cf0 to main
+[33m305b7b2[m HEAD@{4}: commit: first_playable_version
+[33m202642c[m HEAD@{5}: checkout: moving from main to 202642c
+[33m8917402[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{6}: reset: moving to 891740277eafde6fb492dbd16d45cbeb4cee6a6c
+[33m86c1725[m HEAD@{7}: revert: Revert "add_unit_stats_system"
+[33m8917402[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{8}: reset: moving to 891740277eafde6fb492dbd16d45cbeb4cee6a6c
+[33m202642c[m HEAD@{9}: reset: moving to 202642cc4909ed05c1973cdaccad46381a677816
+[33m486cc40[m HEAD@{10}: revert: Revert "save_before_UI_update"
+[33m202642c[m HEAD@{11}: checkout: moving from main to main
+[33m202642c[m HEAD@{12}: commit: save_before_UI_update
+[33m8917402[m[33m ([m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m HEAD@{13}: commit: add_unit_stats_system
+[33md5dbf53[m HEAD@{14}: commit: minor_fix
+[33mf4b85e4[m HEAD@{15}: reset: moving to f4b85e4537adb70205c0c67819a8c6d73fd7930c
+[33mee196ba[m HEAD@{16}: checkout: moving from main to main
+[33mee196ba[m HEAD@{17}: pull --ff --recurse-submodules --progress origin: updating HEAD
+[33mee196ba[m HEAD@{18}: pull --ff --recurse-submodules --progress origin: updating HEAD
+[33mee196ba[m HEAD@{19}: commit (amend): minor_fix
+[33m43e55b7[m HEAD@{20}: reset: moving to HEAD~
+[33m1d4b6b7[m HEAD@{21}: commit: minor_fix
+[33m43e55b7[m HEAD@{22}: commit: minor_update
+[33mf4b85e4[m HEAD@{23}: commit: infrastructure
+[33m6c3c1bb[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m)[m HEAD@{24}: commit (initial): Initial commit
