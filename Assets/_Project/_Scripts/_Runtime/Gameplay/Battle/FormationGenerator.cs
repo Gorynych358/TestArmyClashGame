@@ -14,7 +14,12 @@ namespace ACT.Scripts
             _unitPool = unitPool ?? throw new ArgumentNullException(nameof(unitPool));
         }
 
-        public List<Unit> CreateArmy(ArmyTypes armyType, FormationDataSO formationConfig, Transform parent = null, Vector3 origin = default)
+        public List<Unit> CreateArmy(
+            ArmyTypes armyType, 
+            FormationDataSO formationConfig, 
+            Color armyColor,
+            Transform parent = null, 
+            Vector3 origin = default)
         {
             if (formationConfig == null)
                 throw new ArgumentNullException(nameof(formationConfig));
@@ -42,6 +47,7 @@ namespace ACT.Scripts
                     if (unit == null)
                         continue;
                     unit.ArmyType = armyType;
+                    ApplyColor(unit.transform, armyColor);
                     unit.transform.position = worldPosition;
                     unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
                     unit.name = $"{armyType}_{row}_{column}_{cell.UnitType}";
@@ -52,7 +58,12 @@ namespace ACT.Scripts
             return units;
         }
 
-        public List<Unit> CreateRandomArmy(ArmyTypes armyType, int count, Transform parent = null, Vector3 origin = default)
+        public List<Unit> CreateRandomArmy(
+            ArmyTypes armyType, 
+            int count, 
+            Color armyColor, 
+            Transform parent = null, 
+            Vector3 origin = default)
         {
             var units = new List<Unit>();
             Vector3 facingDirection = armyType == ArmyTypes.Invaders ? Vector3.left : Vector3.right;
@@ -60,7 +71,10 @@ namespace ACT.Scripts
             for (int i = 0; i < count; i++)
             {
                 var unit = _unitPool.Get((UnitTypes)UnityEngine.Random.Range(0, 11), parent);
+                if (unit == null)
+                    continue;
                 unit.ArmyType = armyType;
+                ApplyColor(unit.transform, armyColor);
                 unit.transform.position = origin + new Vector3(0, 0, i * 2.5f);
                 unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
                 unit.name = $"{armyType}_{i}_{unit.UnitType}";
@@ -68,6 +82,22 @@ namespace ACT.Scripts
             }
 
             return units;
+        }
+        
+        //Применяем командный цвет к юнитам:
+        private void ApplyColor(Transform unitTransform, Color color)
+        {
+            Transform modelTransform = unitTransform.GetChild(0).GetChild(0);
+            if(modelTransform != null)
+            {
+                // Меняем цвет модели в цвет армии:
+                if(modelTransform.childCount > 1 && 
+                    modelTransform.GetChild(1).name == "Model")//Проверяем есть ли модель в контейнере юнита.
+                {
+                    var renderer = modelTransform.transform.GetChild(1).gameObject.GetComponentInChildren<Renderer>();
+                    renderer.material.color = color;
+                }
+            }
         }
     }
 }

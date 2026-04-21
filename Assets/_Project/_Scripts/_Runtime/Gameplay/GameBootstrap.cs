@@ -17,9 +17,11 @@ namespace ACT.Scripts
         private readonly BattleProgressView _battleProgressView;
         private readonly CoinsView _coinsView;
         private readonly FightButtonView _fightButtonView;
+        private readonly BattleCompleteView _battleCompleteView;
         private readonly BattleProgressPresenter _battleProgressPresenter;
         private readonly CoinsPresenter _coinsPresenter;
         private readonly FightButtonPresenter _fightButtonPresenter;
+        private readonly BattleCompletePresenter _battleCompletePresenter;
 
         public GameBootstrap(
             IEventBus eventBus,
@@ -30,9 +32,11 @@ namespace ACT.Scripts
             BattleProgressView battleProgressView,
             CoinsView coinsView,
             FightButtonView fightButtonView,
+            BattleCompleteView battleCompleteView,
             BattleProgressPresenter battleProgressPresenter,
             CoinsPresenter coinsPresenter,
-            FightButtonPresenter fightButtonPresenter
+            FightButtonPresenter fightButtonPresenter,
+            BattleCompletePresenter battleCompletePresenter
             )
         {
             _eventBus = eventBus;
@@ -43,9 +47,11 @@ namespace ACT.Scripts
             _battleProgressView = battleProgressView; 
             _coinsView = coinsView; 
             _fightButtonView = fightButtonView; 
+            _battleCompleteView = battleCompleteView;
             _battleProgressPresenter = battleProgressPresenter; 
             _coinsPresenter = coinsPresenter; 
             _fightButtonPresenter = fightButtonPresenter; 
+            _battleCompletePresenter = battleCompletePresenter;
         }
 
         public void Start()
@@ -53,6 +59,7 @@ namespace ACT.Scripts
             _battleProgressPresenter.BindView(_battleProgressView);
             _coinsPresenter.BindView(_coinsView);
             _fightButtonPresenter.BindView(_fightButtonView);
+            _battleCompletePresenter.BindView(_battleCompleteView);
             _battleManager.Initialize(_unitPool, _formationGenerator, _eventBus, _spatialGrid);
             Debug.Log("GameBootstrap started and initialized all systems.");
         }

@@ -2,10 +2,14 @@ namespace ACT.Scripts
 {
     public interface IEconomyManager
     {
-        int Coins { get; }
+        int Balance { get; }
+        int BattleEarnings { get; }
 
-        void AddCoins(int amount);
-        int GetCoinsAmount();
+        void AddCoins(int amount);          // покупки, бонусы, награды вне боя
         void SpendCoins(int amount);
+        void BeginBattleSession();          // обнулить доход за бой
+        void AddBattleEarnings(int amount); // доход за бой
+
+        int GetCoinsAmount();
     }
 }

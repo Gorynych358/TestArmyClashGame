@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using VContainer;
 using System.Collections;
 using System.Collections.Generic;
 
@@ -21,7 +20,7 @@ namespace ACT.Scripts
         [SerializeField] private Vector3 enemiesSpawnPoint = new Vector3(5, 0, 0);
 
         private readonly List<Unit> _defenders = new();
-        private readonly List<Unit> _enemies = new();
+        private readonly List<Unit> _invaders = new();
 
         private UnitObjectPool _pool;
         private FormationGenerator _formationGenerator;
@@ -41,11 +40,10 @@ namespace ACT.Scripts
         private void Start()
         {
             _pool.InitializePool(10, _poolStorage);
-            SpawnArmies(3000);
             _eventBus.Subscribe<FightButtonClickedEvent>(OnBattleStart);
+            _eventBus.Subscribe<BattleCompleteNextButtonClickEvent>(OnBattleCompleteNextButtonClicked);
             _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
-            _eventBus.Publish(new BattleReadyEvent());
-            print($"Defender = {_defenders[0].name}, closest enemy = {GetClosestEnemy(_defenders[0])}");
+            StartCoroutine(InitNewBattle());
         }
 
         private void Update()
@@ -53,13 +51,29 @@ namespace ACT.Scripts
             if(!_battleActive)
                 return;
             _spatialGrid.Clear();
-            _spatialGrid.Build(_defenders, _enemies);
+            _spatialGrid.Build(_defenders, _invaders);
         }
 
         private void OnDisable()
         {
             _eventBus.Unsubscribe<FightButtonClickedEvent>(OnBattleStart);
+            _eventBus.Unsubscribe<FightButtonClickedEvent>(OnBattleStart);
             _eventBus.Unsubscribe<UnitDiedEvent>(OnUnitDied);
+        }
+
+        // --------------------------------------------------------------------
+        // INIT BATTLE
+        // --------------------------------------------------------------------
+        private IEnumerator InitNewBattle()
+        {
+            _battleActive = false;
+
+           SpawnArmies(3000);
+
+            yield return new WaitForSeconds(3f);
+
+            // Показываем UI:
+            _eventBus.Publish(new BattleReadyEvent());
         }
 
         // --------------------------------------------------------------------
@@ -74,42 +88,54 @@ namespace ACT.Scripts
         }
 
         // --------------------------------------------------------------------
+        // BATTLE COMPLETE
+        // --------------------------------------------------------------------
+        private void OnBattleCompleteNextButtonClicked(BattleCompleteNextButtonClickEvent evt)
+        {
+            ClearArmies();
+            StartCoroutine(InitNewBattle());
+        }
+
+        // --------------------------------------------------------------------
         // SPAWN ARMIES
         // --------------------------------------------------------------------
         private void SpawnArmies(float armyPower)
         {
-            ClearArmies();
-
             float defendersPower;
             float invidersPower;
 
-            var defenders = CreateArmy(ArmyTypes.Defenders, _defenderFormation, _battleField, defendersSpawnPoint, out defendersPower);
+            Color armyColor = RandomPastelColorGenerator.GenerateTeamColor(true);
+            var defenders = CreateArmy(ArmyTypes.Defenders, _defenderFormation, armyColor, _battleField, defendersSpawnPoint, out defendersPower);
             _defenders.AddRange(defenders);
 
-            var inviders = CreateArmy(ArmyTypes.Invaders, _inviderFormation, _battleField, enemiesSpawnPoint, out invidersPower);
-            _enemies.AddRange(inviders);
+            armyColor = RandomPastelColorGenerator.GenerateTeamColor(false);
+            var inviders = CreateArmy(ArmyTypes.Invaders, _inviderFormation, armyColor, _battleField, enemiesSpawnPoint, out invidersPower);
+            _invaders.AddRange(inviders);
 
-            print($"Defender power/count = {defendersPower}/{_defenders.Count}, inviders power/count = {invidersPower}/{_enemies.Count}");
+            if(_defenders.Count > 0 && _invaders.Count > 0)
+                _eventBus.Publish(new ArmyCountChangedEvent(_defenders.Count, _invaders.Count));
+            
+            print($"Defender power/count = {defendersPower}/{_defenders.Count}, inviders power/count = {invidersPower}/{_invaders.Count}");
         }
 
-        private List<Unit> CreateArmy(ArmyTypes armyType, FormationDataSO formationConfig, Transform parent, Vector3 origin, out float totalPower)
+        private List<Unit> CreateArmy(ArmyTypes armyType, FormationDataSO formationConfig, Color color, Transform parent, Vector3 origin, out float totalPower)
         {
             List<Unit> units;
             try
             {
                 if (formationConfig != null)
                 {
-                    units = _formationGenerator.CreateArmy(armyType, formationConfig, parent, origin);
+                    units = _formationGenerator.CreateArmy(armyType, formationConfig, color, parent, origin);
                 }
                 else
                 {
-                    units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
+                    units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, color, parent, origin);
                 }
             }
             catch (Exception ex)
             {
                 Debug.LogWarning($"Formation generation failed for {armyType}: {ex.Message}. Falling back to random spawn.");
-                units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, parent, origin);
+                units = _formationGenerator.CreateRandomArmy(armyType, armyType == ArmyTypes.Defenders ? defendersCount : enemiesCount, color, parent, origin);
             }
 
             totalPower = 0f;
@@ -125,14 +151,19 @@ namespace ACT.Scripts
         private void ClearArmies()
         {
             //Возвращаем всех юнитов в пул и очищаем списки армий:
-            foreach (var unit in _defenders)
-                _pool.Return(unit);
-
-            foreach (var unit in _enemies)
-                _pool.Return(unit);
+            if(_defenders.Count > 0)
+            {
+                foreach (var unit in _defenders)
+                    _pool.Return(unit);
+                _defenders.Clear();
+            }
             
-            _defenders.Clear();
-            _enemies.Clear();
+            if(_invaders.Count > 0)
+            {
+                foreach (var unit in _invaders)
+                    _pool.Return(unit);
+                _invaders.Clear();  
+            }
         }
 
         // --------------------------------------------------------------------
@@ -140,15 +171,13 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         private void OnUnitDied(UnitDiedEvent evt)
         {
-            //print($"Battle active = {_battleActive}, Unit {evt.Unit.name} is dead!");
-            /*if (!_battleActive)
-                return;*/
-
-            _defenders.Remove(evt.Unit);
-            _enemies.Remove(evt.Unit);
+            if(evt.Unit.ArmyType == ArmyTypes.Defenders)
+                _defenders.Remove(evt.Unit);
+            else if(evt.Unit.ArmyType == ArmyTypes.Invaders)
+                _invaders.Remove(evt.Unit);
 
             _pool.Return(evt.Unit);
-
+            _eventBus.Publish(new ArmyCountChangedEvent(_defenders.Count, _invaders.Count));
             CheckBattleEnd();
         }
 
@@ -157,10 +186,8 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         private void CheckBattleEnd()
         {
-            if (!_battleActive)
-                return;
 
-            if (_defenders.Count == 0 && _enemies.Count == 0)
+            if (_defenders.Count == 0 && _invaders.Count == 0)
             {
                 StartCoroutine(EndBattle(false)); // ничья
                 return;
@@ -172,7 +199,7 @@ namespace ACT.Scripts
                 return;
             }
 
-            if (_enemies.Count == 0)
+            if (_invaders.Count == 0)
             {
                 StartCoroutine(EndBattle(true)); // победа игрока
                 return;
@@ -186,7 +213,7 @@ namespace ACT.Scripts
         {
             _battleActive = false;
 
-            List<Unit> winners = playerWon ? _defenders : _enemies;
+            List<Unit> winners = playerWon ? _defenders : _invaders;
 
             // 1. Анимация победы
             foreach (var unit in winners)
@@ -195,18 +222,10 @@ namespace ACT.Scripts
                     unit.ChangeState(UnitStates.Victory);
             }
 
-            yield return new WaitForSeconds(2f);
+            yield return new WaitForSeconds(3f);
 
             // 2. UI результата
-            if(playerWon)
-                print("FIGHT COMPLETE! \n Player won!");
-            else
-                print("FIGHT COMPLETE! \n Invaders won!");
-            
-
-            yield return new WaitForSeconds(1f);
-
-            ClearArmies();
+            _eventBus.Publish(new BattleCompleteEvent(true));
         }
 
         // --------------------------------------------------------------------
@@ -222,7 +241,7 @@ namespace ACT.Scripts
 
             List<Unit> enemyList = requester.ArmyType switch
             {
-                ArmyTypes.Defenders => _enemies,
+                ArmyTypes.Defenders => _invaders,
                 ArmyTypes.Invaders  => _defenders,
                 _                   => null
             };

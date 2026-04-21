@@ -10,6 +10,7 @@ namespace ACT.Scripts
         [SerializeField] private RectTransform _canvasRoot;
         [SerializeField] private RectTransform _root;
         [SerializeField] private Button _button;
+        [SerializeField] private float _showDelayTime = 0.3f;
 
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;
@@ -21,14 +22,16 @@ namespace ACT.Scripts
             // Смещаем кнопку ещё ниже, чтобы она точно скрылась
             _hiddenPos = new Vector2(_shownPos.x, bottom - _root.rect.height * 1.2f);
             _root.anchoredPosition = _hiddenPos;
-            Debug.Log("Fight button position = " + _hiddenPos);
         }
 
         public void Show()
         {
+            
             _root.gameObject.SetActive(true);
             _root.localScale = Vector3.zero;
-            _root.DOScale(1f, 0.25f).SetEase(Ease.OutBack);
+            _root.DOScale(1f, 0.25f)
+                    .SetDelay(_showDelayTime)
+                    .SetEase(Ease.OutBack);
         }
         public void HideInstant()
         {

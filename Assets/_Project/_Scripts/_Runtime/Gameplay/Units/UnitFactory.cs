@@ -44,25 +44,30 @@ namespace ACT.Scripts
                 return null;
             }
 
-            SetupModel(model, config);
+            SetupModel(model.transform, config);
             
             unit.Initialize(config);
 
             return unit;
         }
 
-        private void SetupModel(GameObject unitModel, UnitConfigSO config )
+        private void SetupModel(Transform modelTransform, UnitConfigSO config )
         {
             // Цвет
-            var renderer = unitModel.GetComponentInChildren<Renderer>();
-            renderer.material.color = config.ColorMod.ColorDef;
-
+            //Для отображения цвета модели из модификатора добавил специальный GameObject
+            //с именем ModifierColor. Служит для отображения типа юнита.
+            if(modelTransform.childCount > 1 && 
+                modelTransform.GetChild(0).name == "ModifierColor")//Проверяем есть ли этот GameObject
+            {
+                var renderer = modelTransform.transform.GetChild(0).gameObject.GetComponentInChildren<Renderer>();
+                renderer.material.color = config.ColorMod.ColorDef;
+            }
             // Размер
             float scale = config.SizeMod.SizeScaleFactor;
-            unitModel.transform.localScale = Vector3.one * scale;
-
+            modelTransform.localScale = Vector3.one * scale;
+            
             //Позиция по вертикали:
-            unitModel.transform.localPosition = new Vector3(0, scale*0.5f, 0);
+            modelTransform.localPosition = new Vector3(0, scale*0.5f, 0);
         }
     }
 }

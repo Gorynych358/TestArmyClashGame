@@ -20,6 +20,8 @@ namespace ACT.Scripts
         [SerializeField] private float _spatialGridCellSize = 3f;
         [Header("Steering Settings")]
         [SerializeField] SteeringBehaviorProfile _steeringProfile;
+        [Header("Economy Settings")]
+        [SerializeField] GameEconomyProfileSO _economyProfile;
 
         protected override void Configure(IContainerBuilder builder)
         {
@@ -37,6 +39,7 @@ namespace ACT.Scripts
             builder.RegisterInstance(configMap);
             builder.RegisterInstance(prefabsMap);
             builder.RegisterInstance(_steeringProfile);
+            builder.RegisterInstance(_economyProfile);
 
             builder.RegisterComponentInHierarchy<BattleManager>();
             
@@ -48,15 +51,18 @@ namespace ACT.Scripts
                 .WithParameter(_coinPrefab)
                 .WithParameter(_coinPoolStorage)
                 .WithParameter(_coinPrewarmCount);
+            
+            builder.RegisterComponentInHierarchy<UIVisualEffectsService>();
             //UI views:
             builder.RegisterComponentInHierarchy<BattleProgressView>();
             builder.RegisterComponentInHierarchy<CoinsView>();
-            builder.RegisterComponentInHierarchy<UIVisualEffectsService>();
             builder.RegisterComponentInHierarchy<FightButtonView>();
+            builder.RegisterComponentInHierarchy<BattleCompleteView>();
             //UI presenters:
             builder.Register<BattleProgressPresenter>(Lifetime.Singleton);
             builder.Register<CoinsPresenter>(Lifetime.Singleton);
             builder.Register<FightButtonPresenter>(Lifetime.Singleton);
+            builder.Register<BattleCompletePresenter>(Lifetime.Singleton);
             //Services:
             // SpatialGrid - service for fast neighbor search in battle:
             builder.Register<SpatialGrid>(Lifetime.Singleton)

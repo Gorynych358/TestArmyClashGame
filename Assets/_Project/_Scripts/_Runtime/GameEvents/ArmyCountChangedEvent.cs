@@ -1,16 +1,14 @@
-using UnityEngine;
-
 namespace ACT.Scripts
 {
     public readonly struct ArmyCountChangedEvent : IEvent
     {
-        public readonly int PlayerCount;
-        public readonly int EnemyCount;
+        public readonly int DefendersCount;
+        public readonly int InvadersCount;
 
-        public ArmyCountChangedEvent(int playerCount, int enemyCount)
+        public ArmyCountChangedEvent(int defendersCount, int invadersCount)
         {
-            PlayerCount = playerCount;
-            EnemyCount = enemyCount;
+            DefendersCount = defendersCount;
+            InvadersCount = invadersCount;
         }
     }
 }

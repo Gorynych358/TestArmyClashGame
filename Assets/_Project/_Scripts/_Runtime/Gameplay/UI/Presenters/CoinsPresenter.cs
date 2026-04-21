@@ -1,20 +1,20 @@
 using System;
-using System.Numerics;
-using DG.Tweening;
 
 namespace ACT.Scripts
 {
     public sealed class CoinsPresenter : IDisposable
     {
         private readonly IEventBus _eventBus;
-        private readonly EconomyManager _economy;
+        private readonly IEconomyManager _economy;
+        private readonly GameEconomyProfileSO _economyProfile;
 
         private CoinsView _view;
 
-        public CoinsPresenter(IEventBus eventBus, EconomyManager economy)
+        public CoinsPresenter(IEventBus eventBus, IEconomyManager economy, GameEconomyProfileSO economyProfile)
         {
             _eventBus = eventBus;
             _economy = economy;
+            _economyProfile = economyProfile;
         }
 
         public void BindView(CoinsView view)
@@ -28,21 +28,22 @@ namespace ACT.Scripts
             _eventBus.Subscribe<BattleReadyEvent>(OnBattleReady);
         }
 
+        private void OnBattleReady(BattleReadyEvent e)
+        {
+            _economy.BeginBattleSession();
+            _view.Show();
+            _view.SetCoins(_economy.GetCoinsAmount());
+        }
+
         private void OnUnitDied(UnitDiedEvent e)
         {
             if (e.Unit.ArmyType != ArmyTypes.Defenders)
                 return;
-            
+
             var worldPos = e.Unit.transform.position;
             _view.PlayCoinFly(worldPos);
 
-            // Начисляем монеты после старта/по окончании анимации — здесь упрощённо сразу:
-            _economy.AddCoins(10);
-        }
-
-        private void OnBattleReady(BattleReadyEvent e)
-        {
-            _view.Show();
+            _economy.AddBattleEarnings(_economyProfile.CoinsPerKill);
         }
 
         private void OnEconomyChanged(EconomyChangedEvent e)
@@ -50,7 +51,7 @@ namespace ACT.Scripts
             if (_view == null)
                 return;
 
-            _view.SetCoins(_economy.GetCoinsAmount());
+            _view.SetCoins(_economy.BattleEarnings);
         }
 
         public void Dispose()
