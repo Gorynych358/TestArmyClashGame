@@ -61,5 +61,10 @@ namespace ACT.Scripts
             _root.DOAnchorPos(_shownPos, 0.35f)
                 .SetEase(Ease.OutBack);
         }
+
+        private void OnDisable()
+        {
+            _root.DOKill();
+        }
     }
 }

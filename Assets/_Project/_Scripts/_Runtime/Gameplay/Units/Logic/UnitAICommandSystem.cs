@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace ACT.Scripts
@@ -6,7 +7,7 @@ namespace ACT.Scripts
     {
         private readonly BattleManager _battle;
         private readonly SteeringBehaviorProfile _profile;
-
+        private List<Unit> _neighbors;
         public UnitAICommandSystem(BattleManager battle, SteeringBehaviorProfile profile)
         {
             _battle = battle;
@@ -15,11 +16,11 @@ namespace ACT.Scripts
 
         public void Update(IUnitContext unit)
         {
-            if (unit.CurrentTarget == null || !unit.CurrentTarget.IsAlive)
+            if (unit.CurrentTarget == null || !unit.CurrentTarget.IsAttackTarget)
                 unit.CurrentTarget = _battle.GetClosestEnemy(unit);
 
             var target = unit.CurrentTarget;
-
+            
             if (target == null)
             {
                 unit.MoveDirection = Vector3.zero;
@@ -31,7 +32,9 @@ namespace ACT.Scripts
             Vector3 targetPos = target.Transform.position;
 
             Vector3 dirToTarget = (targetPos - unitPos).normalized;
-
+            //Получаем список соседей через SpatialGrid:
+            _neighbors = _battle.GetNeighbors(unit);
+            //Считаем поправки в направлении движения юнита:
             Vector3 avoidance  = ComputeAvoidance(unit);
             Vector3 separation = ComputeSeparation(unit);
             Vector3 alignment  = ComputeAlignment(unit);
@@ -49,7 +52,7 @@ namespace ACT.Scripts
                 ? steering.normalized
                 : Vector3.zero;
 
-            // --- Плавный поворот (как в Army Clash) ---
+            // --- Сглаживание направления(типа, как на льду) ---
             unit.MoveDirection = Vector3.Lerp(
                 unit.MoveDirection,
                 desired,
@@ -62,13 +65,12 @@ namespace ACT.Scripts
 
         private Vector3 ComputeAvoidance(IUnitContext unit)
         {
-            var neighbors = _battle.GetNeighbors(unit);
             Vector3 force = Vector3.zero;
             int count = 0;
 
             Vector3 selfPos = unit.Transform.position;
 
-            foreach (var other in neighbors)
+            foreach (var other in _neighbors)
             {
                 if (other == null)
                     continue;
@@ -92,13 +94,12 @@ namespace ACT.Scripts
 
         private Vector3 ComputeSeparation(IUnitContext unit)
         {
-            var neighbors = _battle.GetNeighbors(unit);
             Vector3 force = Vector3.zero;
             int count = 0;
 
             Vector3 selfPos = unit.Transform.position;
 
-            foreach (var other in neighbors)
+            foreach (var other in _neighbors)
             {
                 if (other == null)
                     continue;
@@ -122,11 +123,10 @@ namespace ACT.Scripts
 
         private Vector3 ComputeAlignment(IUnitContext unit)
         {
-            var neighbors = _battle.GetNeighbors(unit);
             Vector3 sumDir = Vector3.zero;
             int count = 0;
 
-            foreach (var other in neighbors)
+            foreach (var other in _neighbors)
             {
                 if (other == null)
                     continue;
@@ -151,13 +151,12 @@ namespace ACT.Scripts
 
         private Vector3 ComputeCohesion(IUnitContext unit)
         {
-            var neighbors = _battle.GetNeighbors(unit);
             Vector3 center = Vector3.zero;
             int count = 0;
 
             Vector3 selfPos = unit.Transform.position;
 
-            foreach (var other in neighbors)
+            foreach (var other in _neighbors)
             {
                 if (other == null)
                     continue;

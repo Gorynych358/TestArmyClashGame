@@ -30,5 +30,10 @@ namespace ACT.Scripts
             _defendersAmountText.text = defendersAlive.ToString();
             _invadersAmountText.text = invadersAlive.ToString();
         }
+
+        private void OnDisable()
+        {
+            _root.DOKill();
+        }
     }
 }

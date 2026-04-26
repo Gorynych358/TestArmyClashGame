@@ -4,7 +4,7 @@ using System;
 
 namespace ACT.Scripts
 {
-    public class UnitObjectPool
+    public class UnitObjectPool : IDisposable
     {
         private Transform _poolStorage;
         private readonly IUnitFactory _factory;
@@ -39,6 +39,9 @@ namespace ACT.Scripts
 
         public void Return(Unit unit)
         {
+            if (unit == null || unit.gameObject == null)
+                return;
+
             unit.gameObject.SetActive(false);
             unit.transform.parent = _poolStorage;
             _pool[unit.UnitType].Enqueue(unit);
@@ -55,6 +58,24 @@ namespace ACT.Scripts
                     _pool[type].Enqueue(unit);
                 }
             }
+        }
+        //Чистим пул:
+        public void Dispose()
+        {
+            foreach (var kvp in _pool)
+            {
+                var queue = kvp.Value;
+
+                while (queue.Count > 0)
+                {
+                    var unit = queue.Dequeue();
+
+                    if (unit != null && unit.gameObject != null)
+                        UnityEngine.Object.Destroy(unit.gameObject);
+                }
+            }
+
+            _pool.Clear();
         }
     }
 }

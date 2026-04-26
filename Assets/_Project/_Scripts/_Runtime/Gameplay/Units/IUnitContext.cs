@@ -15,13 +15,13 @@ namespace ACT.Scripts
         float AttackDistance { get; }
         float AttackCooldown { get; }
 
-        bool IsAlive { get; }
+        bool IsAttackTarget { get; }
 
         IUnitContext CurrentTarget { get; set; }
 
         void ChangeState(UnitStates newState);
 
-        void Move(Vector3 direction);
+        void Move(Vector3 direction, float deltaTime);
         void Attack();
         void DispatchDeadEvent();
     }

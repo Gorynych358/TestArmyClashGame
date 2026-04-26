@@ -8,6 +8,7 @@ namespace ACT.Scripts
         [Header("Attack power"), SerializeField] private int _atk;
         [Header("Move speed"), SerializeField] private float _speed;
         [Header("Attack speed"), SerializeField] private float _atkspeed;
+        [Header("Knockback power"), SerializeField] private float _knockbackPower;
         
         //Геттеры для получения значений модификаторов. 
         //Редактирование только из инспектора, чтобы не допустить сложноуловимые баги.
@@ -15,5 +16,6 @@ namespace ACT.Scripts
         public int ATK => _atk;
         public float SPEED => _speed;
         public float ATKSPD => _atkspeed;
+        public float Knockback => _knockbackPower;
     }
 }

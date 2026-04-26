@@ -31,13 +31,6 @@ namespace ACT.Scripts
         private Vector2 _shownPos;
         private Vector2 _hiddenRightPos;
 
-        public event Action OnContinueClicked;
-
-        private void Awake()
-        {
-            _continueButton.onClick.AddListener(() => OnContinueClicked?.Invoke());
-        }
-
         public void HideInstant()
         {
             gameObject.SetActive(false);
@@ -108,6 +101,12 @@ namespace ACT.Scripts
                 .DOAnchorPos(_hiddenRightPos, _animDuration)
                 .SetEase(Ease.InBack)
                 .OnComplete(() => gameObject.SetActive(false));
+        }
+
+        private void OnDisable()
+        {
+            _root.DOKill();
+            _canvasGroup.DOKill();
         }
     }
 }

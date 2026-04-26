@@ -46,7 +46,7 @@ namespace ACT.Scripts
 
             SetupModel(model.transform, config);
             
-            unit.Initialize(config);
+            unit.BindConfig(config);
 
             return unit;
         }

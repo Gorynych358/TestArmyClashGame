@@ -71,7 +71,10 @@ namespace ACT.Scripts
             builder.Register<IUnitFactory, UnitFactory>(Lifetime.Singleton);
             builder.Register<UnitObjectPool>(Lifetime.Singleton);
             builder.Register<FormationGenerator>(Lifetime.Singleton);
-            builder.Register<ICommandSystem, UnitAICommandSystem>(Lifetime.Transient);
+            //Common unit services
+            builder.Register<ICommandSystem, UnitAICommandSystem>(Lifetime.Singleton);
+            builder.Register<IAttackSystem, UnitAttacker>(Lifetime.Singleton);
+            builder.Register<IMoveSystem, UnitMover>(Lifetime.Singleton);
             //Scene context entry point:
             builder.RegisterEntryPoint<GameBootstrap>();
         }

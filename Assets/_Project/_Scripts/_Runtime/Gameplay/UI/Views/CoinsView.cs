@@ -49,5 +49,11 @@ namespace ACT.Scripts
             );
             _uiEffector.PlayCoinAnim(uiPos);
         }
+
+        private void OnDisable()
+        {
+            _root.DOKill();
+            _canvasRoot.DOKill();
+        }
     }
 }

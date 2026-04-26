@@ -2,14 +2,13 @@ using UnityEngine;
 
 namespace ACT.Scripts
 {
-    public class UnitMover : IUnitMover
+    public class UnitMover : IMoveSystem
     {
-        public void Move(IUnitContext ctx, Vector3 direction, float speed)
+        public void Move(IUnitContext ctx, Vector3 direction, float speed, float deltaTime)
         {
-            //Debug.Log("Mover move: " + direction);
-            ctx.Transform.position += speed * Time.deltaTime * direction;
+            ctx.Transform.position += speed * deltaTime * direction;
         }
-        public void KnockBack(IUnitContext ctx, Vector3 direction, float knockBackPower)
+        public void ApplyKnockback(IUnitContext ctx, Vector3 direction, float knockbackPower)
         {
             
         }

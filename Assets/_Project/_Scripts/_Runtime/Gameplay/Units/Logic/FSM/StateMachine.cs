@@ -15,9 +15,9 @@ namespace ACT.Scripts
 
         public IState GetCurrent() => _currentState;
 
-        public void Update()
+        public void Update(float deltaTime)
         {
-            _currentState?.Update();
+            _currentState?.Update(deltaTime);
         }
     }
 }

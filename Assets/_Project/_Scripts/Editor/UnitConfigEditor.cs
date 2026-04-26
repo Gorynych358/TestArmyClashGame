@@ -91,6 +91,7 @@ namespace ACT.Scripts
             DrawBar("ATK", config.FinalATK, 100);
             DrawBar("SPEED", config.FinalSPEED, 10);
             DrawBar("ATKSPD", config.FinalATKSPD, 5);
+            DrawBar("KNOCKBACK", config.FinalKNOCKBACK, 5);
         }
 
         private void DrawBar(string label, float value, float maxValue)

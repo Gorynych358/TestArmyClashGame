@@ -27,7 +27,6 @@ namespace ACT.Scripts
         private IEventBus _eventBus;
         private SpatialGrid _spatialGrid;
         private bool _battleActive = false;
-
         public void Initialize(UnitObjectPool pool, FormationGenerator formationGenerator, IEventBus eventBus, SpatialGrid spatialGrid)
         {
             _pool = pool;
@@ -50,8 +49,15 @@ namespace ACT.Scripts
         {
             if(!_battleActive)
                 return;
+            
             _spatialGrid.Clear();
             _spatialGrid.Build(_defenders, _invaders);
+
+            for(int i = _defenders.Count - 1; i >= 0; i--)
+                _defenders[i].Tick(Time.deltaTime);
+                
+            for(int i = _invaders.Count - 1; i >= 0; i--)
+                _invaders[i].Tick(Time.deltaTime);
         }
 
         private void OnDisable()
@@ -70,7 +76,7 @@ namespace ACT.Scripts
 
            SpawnArmies(3000);
 
-            yield return new WaitForSeconds(3f);
+            yield return new WaitForSeconds(1f);
 
             // Показываем UI:
             _eventBus.Publish(new BattleReadyEvent());
@@ -150,20 +156,23 @@ namespace ACT.Scripts
 
         private void ClearArmies()
         {
+            print($"Clear armies! _defenders.Count = {_defenders.Count}, _invaders.Count = {_invaders.Count}");
             //Возвращаем всех юнитов в пул и очищаем списки армий:
-            if(_defenders.Count > 0)
-            {
-                foreach (var unit in _defenders)
-                    _pool.Return(unit);
-                _defenders.Clear();
-            }
             
-            if(_invaders.Count > 0)
+            foreach (var unit in _defenders)
             {
-                foreach (var unit in _invaders)
+                if (unit != null && unit.gameObject != null)
                     _pool.Return(unit);
-                _invaders.Clear();  
             }
+            _defenders.Clear();
+            
+            
+            foreach (var unit in _invaders)
+            {
+                if (unit != null && unit.gameObject != null)
+                    _pool.Return(unit);
+            }
+            _invaders.Clear();
         }
 
         // --------------------------------------------------------------------
@@ -172,10 +181,16 @@ namespace ACT.Scripts
         private void OnUnitDied(UnitDiedEvent evt)
         {
             if(evt.Unit.ArmyType == ArmyTypes.Defenders)
+            {
                 _defenders.Remove(evt.Unit);
+                print($"Defender removed from defenders.list! defenders list count = {_defenders.Count}");  
+            }
             else if(evt.Unit.ArmyType == ArmyTypes.Invaders)
+            {
                 _invaders.Remove(evt.Unit);
-
+                print($"Invader removed from invaders.list! invaders list count = {_invaders.Count}"); 
+            }
+                
             _pool.Return(evt.Unit);
             _eventBus.Publish(new ArmyCountChangedEvent(_defenders.Count, _invaders.Count));
             CheckBattleEnd();
@@ -189,19 +204,19 @@ namespace ACT.Scripts
 
             if (_defenders.Count == 0 && _invaders.Count == 0)
             {
-                StartCoroutine(EndBattle(false)); // ничья
+                EndBattle(false); // ничья
                 return;
             }
 
             if (_defenders.Count == 0)
             {
-                StartCoroutine(EndBattle(false)); // поражение игрока
+                EndBattle(false); // поражение игрока
                 return;
             }
 
             if (_invaders.Count == 0)
             {
-                StartCoroutine(EndBattle(true)); // победа игрока
+                EndBattle(true); // победа игрока
                 return;
             }
         }
@@ -209,20 +224,18 @@ namespace ACT.Scripts
         // --------------------------------------------------------------------
         // END BATTLE
         // --------------------------------------------------------------------
-        private IEnumerator EndBattle(bool playerWon)
+        private void EndBattle(bool playerWon)
         {
             _battleActive = false;
 
-            List<Unit> winners = playerWon ? _defenders : _invaders;
+            /*List<Unit> winners = playerWon ? _defenders : _invaders;
 
             // 1. Анимация победы
             foreach (var unit in winners)
             {
                 if (unit != null && unit.gameObject.activeSelf)
                     unit.ChangeState(UnitStates.Victory);
-            }
-
-            yield return new WaitForSeconds(3f);
+            }*/
 
             // 2. UI результата
             _eventBus.Publish(new BattleCompleteEvent(true));
@@ -245,7 +258,7 @@ namespace ACT.Scripts
                 ArmyTypes.Invaders  => _defenders,
                 _                   => null
             };
-
+            print("GCE " + enemyList);
             if (enemyList == null)
                 return null;
 
@@ -255,7 +268,7 @@ namespace ACT.Scripts
 
             foreach (var enemy in enemyList)
             {
-                if (enemy == null || !enemy.IsAlive)
+                if (enemy == null || !enemy.IsAttackTarget)
                     continue;
 
                 float dist = (enemy.Transform.position - pos).sqrMagnitude;

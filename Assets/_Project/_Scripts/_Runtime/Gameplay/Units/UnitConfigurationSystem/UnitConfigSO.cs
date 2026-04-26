@@ -15,11 +15,13 @@ namespace ACT.Scripts
         [SerializeField] private int _baseATK = 10;
         [SerializeField] private float _baseSPEED = 5f;
         [SerializeField] private float _baseATKSPD = 1f;
+        [SerializeField] private float _baseKnockback = 0f;
 
         public int BaseHP => _baseHP;
         public int BaseATK => _baseATK;
         public float BaseSPEED => _baseSPEED;
         public float BaseATKSPD => _baseATKSPD;
+        public float BaseKNOCKBACK => _baseKnockback;
 
         [Header("Modifiers")]
         [SerializeField] private ModifiersProviderSO _provider;
@@ -40,6 +42,7 @@ namespace ACT.Scripts
         public int FinalATK => BaseATK + ShapeMod.ATK + SizeMod.ATK + ColorMod.ATK;
         public float FinalSPEED => BaseSPEED + ShapeMod.SPEED + SizeMod.SPEED + ColorMod.SPEED;
         public float FinalATKSPD => BaseATKSPD + ShapeMod.ATKSPD + SizeMod.ATKSPD + ColorMod.ATKSPD;
+        public float FinalKNOCKBACK => BaseKNOCKBACK + ShapeMod.Knockback + SizeMod.Knockback + ColorMod.Knockback;
 
         // Power Score (условная ценность юнита для баланса):
         private float _powerScore = -1f;

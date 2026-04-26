@@ -51,6 +51,7 @@ namespace ACT.Scripts
                     unit.transform.position = worldPosition;
                     unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
                     unit.name = $"{armyType}_{row}_{column}_{cell.UnitType}";
+                    unit.Initialize();
                     units.Add(unit);
                 }
             }
@@ -78,6 +79,7 @@ namespace ACT.Scripts
                 unit.transform.position = origin + new Vector3(0, 0, i * 2.5f);
                 unit.transform.rotation = Quaternion.LookRotation(facingDirection, Vector3.up);
                 unit.name = $"{armyType}_{i}_{unit.UnitType}";
+                unit.Initialize();
                 units.Add(unit);
             }
 

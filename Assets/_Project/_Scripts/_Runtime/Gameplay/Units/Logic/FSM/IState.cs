@@ -5,7 +5,7 @@ namespace ACT.Scripts
     public interface IState
     {
         public void Enter();
-        public void Update();
+        public void Update(float deltaTime);
         public void Exit();
     }
 }

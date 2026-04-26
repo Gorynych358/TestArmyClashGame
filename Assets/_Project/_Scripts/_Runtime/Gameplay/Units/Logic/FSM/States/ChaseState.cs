@@ -6,7 +6,7 @@ namespace ACT.Scripts
     {
         public ChaseState(IUnitContext context) : base(context) { }
 
-        public override void Update()
+        public override void Update(float deltaTime)
         {
             if (context.MoveDirection.Equals(Vector3.zero))
             {
@@ -20,7 +20,7 @@ namespace ACT.Scripts
                 return;
             }
 
-            context.Move(context.MoveDirection);
+            context.Move(context.MoveDirection, deltaTime);
         }
     }
 }

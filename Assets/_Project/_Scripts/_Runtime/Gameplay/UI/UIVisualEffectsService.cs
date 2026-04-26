@@ -36,10 +36,14 @@ namespace ACT.Scripts
             seq.Append(rect.DOScale(1.0f, 0.5f).SetEase(Ease.OutQuad));
             seq.Join(rect.DOAnchorPos(endPos, 1.0f).SetEase(Ease.OutBack));
             seq.Join(canvasGroup.DOFade(0f, 0.2f).SetDelay(0.8f));
+            //Страхуемся от форс-мажоров с NRE. При любых вариантах, твин убьётся, монетка вернётся в пул.
+            seq.SetAutoKill(true);
+            seq.SetLink(rect.gameObject, LinkBehaviour.KillOnDisable);
 
-            seq.OnComplete(() =>
+            seq.OnKill(() =>
             {
-                _coinPool.Return(rect);
+                if (rect != null)
+                    _coinPool.Return(rect);
             });
         }
 
@@ -48,7 +52,7 @@ namespace ACT.Scripts
             if (_confettiPrefab == null)
                 return;
 
-            var fx = Instantiate(_confettiPrefab, _effectorContainer);
+            //var fx = Instantiate(_confettiPrefab, _effectorContainer);
             // тут либо авто‑destroy по ParticleSystem.main.duration, либо отдельный скрипт
         }
     }

@@ -6,7 +6,7 @@ namespace ACT.Scripts
     {
         public IdleState(IUnitContext context) : base(context) { }
 
-        public override void Update()
+        public override void Update(float deltaTime)
         {
             if (context.MoveDirection != Vector3.zero)
                 context.ChangeState(UnitStates.Chase);

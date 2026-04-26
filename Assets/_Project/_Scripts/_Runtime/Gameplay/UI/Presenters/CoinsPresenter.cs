@@ -1,4 +1,5 @@
 using System;
+using UnityEngine;
 
 namespace ACT.Scripts
 {
@@ -32,7 +33,7 @@ namespace ACT.Scripts
         {
             _economy.BeginBattleSession();
             _view.Show();
-            _view.SetCoins(_economy.GetCoinsAmount());
+            _view.SetCoins(_economy.BattleEarnings);
         }
 
         private void OnUnitDied(UnitDiedEvent e)

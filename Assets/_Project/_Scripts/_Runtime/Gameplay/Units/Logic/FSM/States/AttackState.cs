@@ -11,7 +11,7 @@ namespace ACT.Scripts
         {
             _cooldownTime = 0;
         }
-        public override void Update()
+        public override void Update(float deltaTime)
         {
             if (!context.CanAttack)
             {
@@ -19,7 +19,7 @@ namespace ACT.Scripts
                 return;
             }
 
-            _cooldownTime -= Time.deltaTime;
+            _cooldownTime -= deltaTime;
             
             if(_cooldownTime <= 0)
             {

@@ -11,16 +11,16 @@ namespace ACT.Scripts
     {
         [SerializeField] private RectTransform _root;
         [SerializeField] private Button _button;
-
+        private CanvasGroup _canvasGroup;
 
         public void Show()
         {
-            var canvasGroup = _root.GetComponent<CanvasGroup>();
-            canvasGroup.alpha = 0;
+            _canvasGroup = _root.GetComponent<CanvasGroup>();
+            _canvasGroup.alpha = 0;
             _root.gameObject.SetActive(true);
             _root.localScale = new Vector2(0.3f, 0.3f);
             _root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
-            canvasGroup.DOFade(1f, 0.4f).SetEase(Ease.OutQuad);
+            _canvasGroup.DOFade(1f, 0.4f).SetEase(Ease.OutQuad);
         }
         public void HideInstant()
         {
@@ -36,6 +36,12 @@ namespace ACT.Scripts
         {
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(() => onClick?.Invoke());
+        }
+
+        private void OnDisable()
+        {
+            _root.DOKill();
+            _canvasGroup.DOKill();
         }
     }
 }

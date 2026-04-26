@@ -21,13 +21,10 @@ namespace ACT.Scripts
         public int MaxHealth => _config.FinalHP;
 
         public bool CanAttack { get; set; }
-
-        public float AttackDistance => 2f;
-
-        public bool IsAlive => _healthSystem.IsAlive;
-
+        public bool IsAttackTarget{get;private set;}
         public IUnitContext CurrentTarget { get; set; }
         public Vector3 MoveDirection{get;set;}
+        public float AttackDistance => 3f;
     #endregion
     #region PRIVATE FIELDS
         private UnitConfigSO _config;
@@ -35,9 +32,9 @@ namespace ACT.Scripts
         private Dictionary<UnitStates, IState> _states;
         private BattleManager _battleManager;
         private ICommandSystem _commandSystem;
-        private IUnitHealth _healthSystem;
-        private IAttacker _attacker;
-        private IUnitMover _mover;
+        private IAttackSystem _attacker;
+        private IMoveSystem _mover;
+        private IHealthSystem _healthSystem;
 
         private StateMachine _stateMachine;
 
@@ -47,30 +44,31 @@ namespace ACT.Scripts
         private DieState _dieState;
         private VictoryState _victoryState;
 
-        private bool _isBattleStarted;
+        private bool _isActive = false;
+
+        private Animator _animator;
     #endregion
 
         [Inject]
         public void Construct(
             IEventBus eventBus,
             BattleManager battleManager,
-            ICommandSystem commandSystem
+            ICommandSystem commandSystem,
+            IAttackSystem attackSystem,
+            IMoveSystem moveSystem
             )
         {
             _eventBus = eventBus;
             _battleManager = battleManager;
             _commandSystem = commandSystem;
-        }
+            _attacker = attackSystem;
+            _mover = moveSystem;
 
-        public void Initialize(UnitConfigSO config)
-        {
-            _config = config;
-            _healthSystem = new UnitHealth(_config.FinalHP);
-            _attacker = new UnitAttacker();
-            _mover = new UnitMover();
-            
+            _healthSystem = new UnitHealth();
+            //Передаём колбэк критического урона в HealtSystem:
+            _healthSystem.BindZeroHealtCallback(OnCriticalDamageReceived);
+            _animator = this.GetComponentInChildren<Animator>();
             _stateMachine = new StateMachine();
-
              _states = new Dictionary<UnitStates, IState>
             {
                 [UnitStates.Idle] = new IdleState(this),
@@ -79,32 +77,28 @@ namespace ACT.Scripts
                 [UnitStates.Die] = new DieState(this),
                 [UnitStates.Victory] = new VictoryState(this)
             };
+        }
 
+        public void BindConfig(UnitConfigSO config) => _config = config;
+
+        public void Initialize()
+        {
+            _healthSystem.Initialize(_config.FinalHP);
+            IsAttackTarget = true;
             ChangeState(UnitStates.Idle);
         }
 
         private void OnBattleStarted(BattleStartEvent evt)
         {
-            _isBattleStarted = true;
+            _isActive = true;
         }
 
-        public void Update()
+        public void Tick(float deltaTime)
         {
-            if(!_isBattleStarted)
-                return;
-            
-            _commandSystem.Update(this);
-           
-
-            if (!_healthSystem.IsAlive)
-            {
-                //ChangeState(UnitStates.Die);
-                DispatchDeadEvent();
-                //this.transform.GetComponentInChildren<Material>().color = new Color32(0,0,0,128);
-                return;
-            }
+            if(_isActive)
+                _commandSystem.Update(this);
             //print($"Unit name = {this.name}, Move direction = {MoveDirection}, current state = {_stateMachine.GetCurrent()}");
-            _stateMachine.Update();
+            _stateMachine.Update(deltaTime);
         }
 
         public void ChangeState(UnitStates type)
@@ -112,9 +106,23 @@ namespace ACT.Scripts
             _stateMachine.ChangeState(_states[type]);
         }
 
-        public void Move(Vector3 direction) => _mover.Move(this, direction, _config.FinalSPEED);
+        public void Move(Vector3 direction, float deltaTime)
+        {
+            _mover.Move(this, direction, _config.FinalSPEED, deltaTime);
+        }
 
-        public void Attack() => _attacker.Attack(this, _config.FinalATK);
+        public void Attack()
+        {
+            print($"Unit with name {this.name.ToUpper()} attacks unit with name {((Unit)CurrentTarget).name.ToUpper()} ");
+            _attacker.Attack(this, _config.FinalATK);
+        }
+
+        private void OnCriticalDamageReceived()
+        {
+            IsAttackTarget = false;
+            _isActive = false;
+            ChangeState(UnitStates.Die);
+        }
 
         public void DispatchDeadEvent()
         {
@@ -133,7 +141,7 @@ namespace ACT.Scripts
         public void ApplyDamage(float damage)
         {
             _healthSystem.TakeDamage(damage);
-            print($"Unit with name {this.name.ToUpper()} take damage with strength {damage}, max health = {_healthSystem.Max} current health = {_healthSystem.Current}");
+            //print($"Unit with name {this.name.ToUpper()} take damage with strength {damage}, max health = {_healthSystem.Max} current health = {_healthSystem.Current}");
         }
     }
 }

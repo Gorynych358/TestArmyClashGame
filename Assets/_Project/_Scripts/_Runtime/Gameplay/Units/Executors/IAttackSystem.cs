@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace ACT.Scripts
 {
-    public interface IAttacker
+    public interface IAttackSystem
     {
         void Attack(IDamageable targetUnit, float attackPower);
     }

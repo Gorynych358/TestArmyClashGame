@@ -3,16 +3,21 @@ using UnityEngine;
 
 namespace ACT.Scripts
 {
-    public class UnitHealth : IUnitHealth
+    public class UnitHealth : IHealthSystem
     {
         public float Current { get; private set; }
-        public float Max { get; private set; }
         public bool IsAlive => Current > 0;
 
-        public UnitHealth(float maxHealth)
+        private Action _criticalDamageCallback;
+
+        public void Initialize(float maxHealth)
         {
-            Max = maxHealth;
             Current = maxHealth;
+        }
+
+        public void BindZeroHealtCallback(Action zeroHealthCallback)
+        {
+            _criticalDamageCallback = zeroHealthCallback;
         }
 
         public void TakeDamage(float amount)
@@ -21,7 +26,7 @@ namespace ACT.Scripts
             if (Current <= 0)
             {
                 Current = 0;
-                //EventBus.RaiseUnitDied(_unit);
+                _criticalDamageCallback?.Invoke();
             }
         }
     }

@@ -1,6 +1,6 @@
 namespace ACT.Scripts
 {
-    public class UnitAttacker : IAttacker
+    public class UnitAttacker : IAttackSystem
     {
         public void Attack(IDamageable targetUnit, float attackPower)
         {
