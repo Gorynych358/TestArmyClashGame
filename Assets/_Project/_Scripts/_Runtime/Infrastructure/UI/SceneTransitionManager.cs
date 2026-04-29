@@ -1,5 +1,6 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
+using System.Threading;
 
 namespace ACT.Scripts
 {
@@ -20,7 +21,10 @@ namespace ACT.Scripts
 
         private async UniTask LoadScene(string scene)
         {
-            await _view.FadeIn();
+            var token = _view.Token;
+
+            await _view.FadeIn().AttachExternalCancellation(token);
+
             _view.ShowLoading();
 
             var op = SceneManager.LoadSceneAsync(scene);
@@ -28,18 +32,22 @@ namespace ACT.Scripts
 
             while (op.progress < 0.9f)
             {
+                token.ThrowIfCancellationRequested();
+
                 _view.UpdateProgress(op.progress / 0.9f);
-                await UniTask.Yield();
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
 
-            _view.UpdateProgress(1);
-            await UniTask.Delay(500);
+            _view.UpdateProgress(1f);
+            await UniTask.Delay(300, cancellationToken: token);
 
             op.allowSceneActivation = true;
-            while (!op.isDone) await UniTask.Yield();
+
+            await UniTask.WaitUntil(() => op.isDone, cancellationToken: token);
 
             _view.HideLoading();
-            await _view.FadeOut();
+
+            await _view.FadeOut().AttachExternalCancellation(token);
         }
     }
 }

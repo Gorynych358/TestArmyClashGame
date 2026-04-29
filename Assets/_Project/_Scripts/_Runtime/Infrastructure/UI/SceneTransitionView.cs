@@ -2,6 +2,7 @@ using Cysharp.Threading.Tasks;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
+using System.Threading;
 
 namespace ACT.Scripts
 {
@@ -16,14 +17,40 @@ namespace ACT.Scripts
         [SerializeField] private Slider progressBar;
         [SerializeField] private TMP_Text loadingText;
 
-        public async UniTask FadeIn()
+        private CancellationTokenSource _cts;
+        private bool _isFading;
+
+        private void Awake()
         {
-            await Fade(fadeGroup, 0f, 1f, fadeDuration);
+            _cts = new CancellationTokenSource();
         }
 
-        public async UniTask FadeOut()
+        private void OnDestroy()
         {
-            await Fade(fadeGroup, 1f, 0f, fadeDuration);
+            _cts.Cancel();
+            _cts.Dispose();
+        }
+
+        public CancellationToken Token => _cts.Token;
+
+        public UniTask FadeIn() => SafeFade(0f, 1f);
+
+        public UniTask FadeOut() => SafeFade(1f, 0f);
+
+        private async UniTask SafeFade(float from, float to)
+        {
+            if (_isFading)
+                return;
+
+            _isFading = true;
+            try
+            {
+                await Fade(fadeGroup, from, to, fadeDuration, Token);
+            }
+            finally
+            {
+                _isFading = false;
+            }
         }
 
         public void ShowLoading()
@@ -49,7 +76,8 @@ namespace ACT.Scripts
             CanvasGroup group,
             float from,
             float to,
-            float duration)
+            float duration,
+            CancellationToken token)
         {
             float t = 0f;
             group.alpha = from;
@@ -57,9 +85,12 @@ namespace ACT.Scripts
 
             while (t < duration)
             {
+                token.ThrowIfCancellationRequested();
+
                 t += Time.deltaTime;
                 group.alpha = Mathf.Lerp(from, to, t / duration);
-                await UniTask.Yield();
+
+                await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
 
             group.alpha = to;

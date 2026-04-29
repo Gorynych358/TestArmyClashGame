@@ -24,11 +24,10 @@ namespace ACT.Scripts
 
         private void OnFightComplete(BattleCompleteEvent e)
         {
+            _view.SetStats(10, _economyManager.BattleEarnings);
+            
             if (e.IsPlayerWon)
-            {
-                _view.SetStats(10, _economyManager.BattleEarnings);
                 _view.ShowVictory();
-            }
             else
                 _view.ShowLose();
         }

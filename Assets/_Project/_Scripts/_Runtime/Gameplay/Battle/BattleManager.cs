@@ -238,7 +238,7 @@ namespace ACT.Scripts
             }*/
 
             // 2. UI результата
-            _eventBus.Publish(new BattleCompleteEvent(true));
+            _eventBus.Publish(new BattleCompleteEvent(playerWon));
         }
 
         // --------------------------------------------------------------------
