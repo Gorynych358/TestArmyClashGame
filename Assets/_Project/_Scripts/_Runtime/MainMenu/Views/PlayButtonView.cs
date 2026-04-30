@@ -5,13 +5,11 @@ using System;
 
 namespace ACT.Scripts
 {
-    
-    [RequireComponent(typeof(CanvasGroup))]
     public sealed class PlayButtonView : MonoBehaviour
     {
+        [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _root;
         [SerializeField] private Button _button;
-        private CanvasGroup _canvasGroup;
 
         public void Show()
         {
@@ -19,8 +17,12 @@ namespace ACT.Scripts
             _canvasGroup.alpha = 0;
             _root.gameObject.SetActive(true);
             _root.localScale = new Vector2(0.3f, 0.3f);
-            _root.DOScale(1f, 0.4f).SetEase(Ease.OutBack);
-            _canvasGroup.DOFade(1f, 0.4f).SetEase(Ease.OutQuad);
+            _root.DOScale(1f, 0.4f)
+                .SetEase(Ease.OutBack)
+                .SetLink(gameObject);
+            _canvasGroup.DOFade(1f, 0.4f)
+                .SetEase(Ease.OutQuad)
+                .SetLink(gameObject);
         }
         public void HideInstant()
         {
@@ -40,8 +42,7 @@ namespace ACT.Scripts
 
         private void OnDisable()
         {
-            _root.DOKill();
-            _canvasGroup.DOKill();
+            DOTween.Kill(gameObject);
         }
     }
 }

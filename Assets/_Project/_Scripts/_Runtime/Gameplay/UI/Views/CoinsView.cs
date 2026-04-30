@@ -11,14 +11,25 @@ namespace ACT.Scripts
         [SerializeField] private TextMeshProUGUI _coinsText;
         [SerializeField] private UIVisualEffectsService _uiEffector;
         [SerializeField] private float _showDelayTime = 0.1f;
+        private Vector2 _shownPos;
+        private Vector2 _hiddenPos;
+
+        private void Awake()
+        {
+            _shownPos = _root.anchoredPosition;
+            float top = _canvasRoot.rect.yMax;
+            // Смещаем панельку с завоёванными монетками выше, чтобы гарантированно было не видно:
+            _hiddenPos = new Vector2(_shownPos.x, top + _root.rect.height * 1.2f);
+            _root.anchoredPosition = _hiddenPos;
+        }
 
         public void Show()
         {
             _root.gameObject.SetActive(true);
-            _root.anchoredPosition = new Vector2(400f, _root.anchoredPosition.y);
-            _root.DOAnchorPosX(0f, 0.35f)
+            _root.DOAnchorPos(_shownPos, 0.35f)
                     .SetDelay(_showDelayTime)
-                    .SetEase(Ease.OutCubic);
+                    .SetEase(Ease.OutCubic)
+                    .SetLink(gameObject);
         }
         public void HideInstant()
         {
@@ -31,8 +42,11 @@ namespace ACT.Scripts
             _coinsText.transform
                                 .DOScale(1.2f, 0.1f)
                                 .SetEase(Ease.OutBack)
+                                .SetLink(gameObject)
                                 .OnComplete(() =>
-                                    _coinsText.transform.DOScale(1f, 0.1f)
+                                    _coinsText.transform
+                                        .DOScale(1f, 0.1f)
+                                        .SetLink(gameObject)
                                 );
         }    
         
@@ -52,8 +66,7 @@ namespace ACT.Scripts
 
         private void OnDisable()
         {
-            _root.DOKill();
-            _canvasRoot.DOKill();
+            DOTween.Kill(gameObject);
         }
     }
 }

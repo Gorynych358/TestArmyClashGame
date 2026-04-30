@@ -38,7 +38,7 @@ namespace ACT.Scripts
 
         private void OnUnitDied(UnitDiedEvent e)
         {
-            if (e.Unit.ArmyType != ArmyTypes.Defenders)
+            if (e.Unit.ArmyType != ArmyTypes.Invaders)
                 return;
 
             var worldPos = e.Unit.transform.position;

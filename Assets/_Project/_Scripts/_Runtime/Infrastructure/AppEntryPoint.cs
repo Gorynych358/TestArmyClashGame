@@ -1,6 +1,7 @@
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using DG.Tweening;
 
 namespace ACT.Scripts
 {
@@ -22,9 +23,6 @@ namespace ACT.Scripts
 
         public void Start()
         {
-            //The entry point of the application. 
-            //Global services initializtion, 
-            //remote data loading, authentication etc.
             Application.targetFrameRate = 60;
             if(Application.isEditor)
                 Debug.Log("Game initialized!");

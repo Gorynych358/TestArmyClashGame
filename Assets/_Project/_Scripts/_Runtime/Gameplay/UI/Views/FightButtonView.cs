@@ -11,7 +11,7 @@ namespace ACT.Scripts
         [SerializeField] private RectTransform _root;
         [SerializeField] private Button _button;
         [SerializeField] private float _showDelayTime = 0.3f;
-
+        private const float SHOW_TIME = 0.25f;
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;
 
@@ -19,7 +19,7 @@ namespace ACT.Scripts
         {
             _shownPos = _root.anchoredPosition;
             float bottom = _canvasRoot.rect.yMin;
-            // Смещаем кнопку ещё ниже, чтобы она точно скрылась
+            // Смещаем кнопку ещё ниже, чтобы гарантированно была скрыта:
             _hiddenPos = new Vector2(_shownPos.x, bottom - _root.rect.height * 1.2f);
             _root.anchoredPosition = _hiddenPos;
         }
@@ -31,7 +31,8 @@ namespace ACT.Scripts
             _root.localScale = Vector3.zero;
             _root.DOScale(1f, 0.25f)
                     .SetDelay(_showDelayTime)
-                    .SetEase(Ease.OutBack);
+                    .SetEase(Ease.OutBack)
+                    .SetLink(gameObject);
         }
         public void HideInstant()
         {
@@ -52,19 +53,21 @@ namespace ACT.Scripts
         public void HideWithSlide()
         {
             _root.DOAnchorPos(_hiddenPos, 0.35f)
-                .SetEase(Ease.InBack);
+                .SetEase(Ease.InBack)
+                .SetLink(gameObject);
         }
 
         public void ShowWithSlide()
         {
             _root.gameObject.SetActive(true);
             _root.DOAnchorPos(_shownPos, 0.35f)
-                .SetEase(Ease.OutBack);
+                .SetEase(Ease.OutBack)
+                .SetLink(gameObject);
         }
 
         private void OnDisable()
         {
-            _root.DOKill();
+            DOTween.Kill(gameObject);
         }
     }
 }

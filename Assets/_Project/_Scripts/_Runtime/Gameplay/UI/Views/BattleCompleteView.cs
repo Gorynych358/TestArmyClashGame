@@ -84,29 +84,32 @@ namespace ACT.Scripts
 
             _canvasGroup
                 .DOFade(1f, 0.3f)
-                .SetDelay(_showDelayTime);
+                .SetDelay(_showDelayTime)
+                .SetLink(gameObject);
 
             _root
                 .DOAnchorPos(_shownPos, _animDuration)
                 .SetDelay(_showDelayTime)
-                .SetEase(Ease.OutBack);
+                .SetEase(Ease.OutBack)
+                .SetLink(gameObject);
         }
 
         public void HideAnimated()
         {
             _canvasGroup
-                .DOFade(0f, 0.25f);
+                .DOFade(0f, 0.25f)
+                .SetLink(gameObject);
 
             _root
                 .DOAnchorPos(_hiddenRightPos, _animDuration)
                 .SetEase(Ease.InBack)
+                .SetLink(gameObject)
                 .OnComplete(() => gameObject.SetActive(false));
         }
 
         private void OnDisable()
         {
-            _root.DOKill();
-            _canvasGroup.DOKill();
+            DOTween.Kill(gameObject);
         }
     }
 }

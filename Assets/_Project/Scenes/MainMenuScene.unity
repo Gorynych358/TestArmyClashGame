@@ -206,6 +206,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da93583e30363cf4fbb0a0bc3e29f7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.PlayButtonView
+  _canvasGroup: {fileID: 440884699}
   _root: {fileID: 440884697}
   _button: {fileID: 684390604}
 --- !u!225 &440884699
