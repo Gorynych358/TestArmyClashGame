@@ -1,9 +1,10 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace ACT.Scripts
 {
-    public class CoinObjectPool
+    public class CoinObjectPool : IDisposable
     {
         private readonly GameObject _prefab;
         private readonly RectTransform _poolStorage;
@@ -20,7 +21,7 @@ namespace ACT.Scripts
 
         private RectTransform Create()
         {
-            var inst = Object.Instantiate(_prefab, _poolStorage);
+            var inst = UnityEngine.Object.Instantiate(_prefab, _poolStorage);
             inst.gameObject.SetActive(false);
             return inst.GetComponent<RectTransform>();
         }
@@ -38,5 +39,17 @@ namespace ACT.Scripts
             coin.SetParent(_poolStorage, false);
             _pool.Push(coin);
         }
+
+        public void Dispose()
+		{
+			while (_pool.Count > 0)
+			{
+				var coin = _pool.Pop();
+				if (coin != null)
+					UnityEngine.Object.Destroy(coin.gameObject);
+			}
+
+			_pool.Clear();
+		}
     }
 }

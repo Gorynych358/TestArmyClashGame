@@ -20,22 +20,30 @@ namespace ACT.Scripts
             _view.BindClick(OnButtonClicked);
 
             _eventBus.Subscribe<BattleReadyEvent>(OnBattleReady);
+            _eventBus.Subscribe<ChangeDefendersFormationEvent>(OnChageFormationEvent);
         }
 
-        private void OnBattleReady(BattleReadyEvent e)
+        private void OnChageFormationEvent(ChangeDefendersFormationEvent _)
         {
-            _view.ShowWithSlide();
+            _view.SetInteractable(false);
+        }
+
+        private void OnBattleReady(BattleReadyEvent _)
+        {
+            _view.SetInteractable(true);
+            _view.Show();
         }
 
         private void OnButtonClicked()
         {
-            _view.HideWithSlide();
+            _view.HideAnimated();
             _eventBus.Publish(new FightButtonClickedEvent());
         }
 
         public void Dispose()
         {
             _eventBus.Unsubscribe<BattleReadyEvent>(OnBattleReady);
+            _eventBus.Unsubscribe<ChangeDefendersFormationEvent>(OnChageFormationEvent);
         }
     }
 }

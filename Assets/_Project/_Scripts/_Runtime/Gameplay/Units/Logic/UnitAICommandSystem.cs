@@ -7,7 +7,7 @@ namespace ACT.Scripts
     {
         private readonly BattleManager _battle;
         private readonly SteeringBehaviorProfile _profile;
-        private List<Unit> _neighbors;
+        private readonly List<Unit> _neighbors = new(64);
         public UnitAICommandSystem(BattleManager battle, SteeringBehaviorProfile profile)
         {
             _battle = battle;
@@ -32,8 +32,9 @@ namespace ACT.Scripts
             Vector3 targetPos = target.Transform.position;
 
             Vector3 dirToTarget = (targetPos - unitPos).normalized;
-            //Получаем список соседей через SpatialGrid:
-            _neighbors = _battle.GetNeighbors(unit);
+            //Заливаем список соседей через SpatialGrid:
+            _battle.FillNeighbors(unit, _neighbors);
+            
             //Считаем поправки в направлении движения юнита:
             Vector3 avoidance  = ComputeAvoidance(unit);
             Vector3 separation = ComputeSeparation(unit);

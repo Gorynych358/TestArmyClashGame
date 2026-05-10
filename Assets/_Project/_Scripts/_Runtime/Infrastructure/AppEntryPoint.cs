@@ -23,9 +23,11 @@ namespace ACT.Scripts
 
         public void Start()
         {
-            Application.targetFrameRate = 60;
             if(Application.isEditor)
                 Debug.Log("Game initialized!");
+            else
+                Application.targetFrameRate = 60;
+            
             _soundManager.PlayMusic(_audioLibrary.GetClip("BackgroundMusicLoop"));
             _sceneTransitionManager.LoadMainMenu().Forget();
         }

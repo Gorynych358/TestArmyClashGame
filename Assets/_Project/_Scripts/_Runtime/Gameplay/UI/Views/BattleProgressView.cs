@@ -6,12 +6,16 @@ namespace ACT.Scripts
 {
     public sealed class BattleProgressView : MonoBehaviour
     {
-        [SerializeField] private RectTransform _canvasRoot;
-        [SerializeField] private RectTransform _root;
+        [Header("UI")]
         [SerializeField] private RectTransform _progressBarFill;
         [SerializeField] private TextMeshProUGUI _defendersAmountText;
         [SerializeField] private TextMeshProUGUI _invadersAmountText;
+        [Header("UI references")]
+        [SerializeField] private RectTransform _canvasRoot;
+        [SerializeField] private RectTransform _root;
+        [Header("Animation settings")]
         [SerializeField] private float _showDelayTime = 0f;
+        [SerializeField] private float _animDuration = 0.25f;
         private const float SHOW_TIME = 0.3f;
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;
@@ -38,10 +42,20 @@ namespace ACT.Scripts
             _root.gameObject.SetActive(false);
         }
 
-        public void SetCounts(int defendersAlive, int invadersAlive)
+        public void SetStats(
+            int defendersAlive,
+            int invadersAlive,
+            float fillScaleX)
         {
+            // Обновляем текст
             _defendersAmountText.text = defendersAlive.ToString();
             _invadersAmountText.text = invadersAlive.ToString();
+
+            // Масштабируем только зелёную заливку
+            _progressBarFill
+                .DOScaleX(fillScaleX, _animDuration)
+                .SetEase(Ease.OutCubic)
+                .SetLink(gameObject);
         }
 
         private void OnDisable()

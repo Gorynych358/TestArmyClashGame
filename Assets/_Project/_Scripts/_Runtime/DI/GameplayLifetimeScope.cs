@@ -57,11 +57,13 @@ namespace ACT.Scripts
             builder.RegisterComponentInHierarchy<BattleProgressView>();
             builder.RegisterComponentInHierarchy<CoinsView>();
             builder.RegisterComponentInHierarchy<FightButtonView>();
+            builder.RegisterComponentInHierarchy<ChangeFormationView>();
             builder.RegisterComponentInHierarchy<BattleCompleteView>();
             //UI presenters:
             builder.Register<BattleProgressPresenter>(Lifetime.Singleton);
             builder.Register<CoinsPresenter>(Lifetime.Singleton);
             builder.Register<FightButtonPresenter>(Lifetime.Singleton);
+            builder.Register<ChangeFormationPresenter>(Lifetime.Singleton);
             builder.Register<BattleCompletePresenter>(Lifetime.Singleton);
             //Services:
             // SpatialGrid - service for fast neighbor search in battle:
@@ -70,7 +72,9 @@ namespace ACT.Scripts
             builder.Register<EconomyManager>(Lifetime.Singleton);
             builder.Register<IUnitFactory, UnitFactory>(Lifetime.Singleton);
             builder.Register<UnitObjectPool>(Lifetime.Singleton);
-            builder.Register<FormationGenerator>(Lifetime.Singleton);
+            builder.Register<RandomArmyCalculator>(Lifetime.Singleton);
+            builder.Register<FormationBuilder>(Lifetime.Singleton);
+            builder.Register<ArmySpawner>(Lifetime.Singleton);
             //Common unit services
             builder.Register<ICommandSystem, UnitAICommandSystem>(Lifetime.Singleton);
             builder.Register<IAttackSystem, UnitAttacker>(Lifetime.Singleton);

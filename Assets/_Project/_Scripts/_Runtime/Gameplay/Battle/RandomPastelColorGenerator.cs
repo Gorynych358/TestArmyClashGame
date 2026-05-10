@@ -1,35 +1,30 @@
 using UnityEngine;
 
 namespace ACT.Scripts
-{  
+{
     /// <summary>
-    /// Генератор случайных цветов в постельных тонах, чтобы были не "вырвиглазные" тона, 
-    /// и отсекаем слишком серые тона.
-    /// Параметры генерации можно настроить, можно оставить по-умалчанию.
+    /// Генератор пастельных цветов и контрастных пастельных цветов.
     /// </summary>
     public static class RandomPastelColorGenerator
     {
         /// <summary>
-        /// Генерирует случайный пастельный цвет с контролем насыщенности и светлоты.
+        /// Генерирует случайный пастельный цвет.
         /// </summary>
-        /// <param name="minSaturation">Минимальная насыщенность (0.0–1.0)</param>
-        /// <param name="maxSaturation">Максимальная насыщенность (0.0–1.0)</param>
-        /// <param name="minLightness">Минимальная светлота (0.0–1.0)</param>
-        /// <param name="maxLightness">Максимальная светлота (0.0–1.0)</param>
-        /// <returns>Пастельный цвет</returns>
         public static Color GeneratePastelColor(
-            float minSaturation = 0.15f,
-            float maxSaturation = 0.4f,
-            float minLightness = 0.7f,
-            float maxLightness = 0.93f)
+            float minSaturation = 0.25f,
+            float maxSaturation = 0.45f,
+            float minValue = 0.75f,
+            float maxValue = 0.9f)
         {
             Color color;
+
             do
             {
-                float hue = Random.Range(0f, 360f);
+                float hue = Random.Range(0f, 1f);
                 float saturation = Random.Range(minSaturation, maxSaturation);
-                float lightness = Random.Range(minLightness, maxLightness);
-                color = Color.HSVToRGB(hue / 360f, saturation, lightness);
+                float value = Random.Range(minValue, maxValue);
+
+                color = Color.HSVToRGB(hue, saturation, value);
             }
             while (IsTooGray(color));
 
@@ -37,72 +32,45 @@ namespace ACT.Scripts
         }
 
         /// <summary>
-        /// Генерирует пастельный цвет для команды: холодные тона для защитников, тёплые — для захватчиков.
+        /// Генерирует пастельный цвет, контрастный к исходному.
+        /// Контраст достигается выбором противоположного оттенка (Hue + 180°).
         /// </summary>
-        /// <param name="isDefender">true — защитник (холодные тона), false — захватчик (тёплые тона)</param>
-        /// <param name="minSaturation">Минимальная насыщенность</param>
-        /// <param name="maxSaturation">Максимальная насыщенность</param>
-        /// <param name="minLightness">Минимальная светлота</param>
-        /// <param name="maxLightness">Максимальная светлота</param>
-        /// <returns>Пастельный цвет команды</returns>
-        public static Color GenerateTeamColor(
-            bool isDefender,
-            float minSaturation = 0.25f,
-            float maxSaturation = 0.45f,
-            float minLightness = 0.75f,
-            float maxLightness = 0.9f)
+        /// <param name="sourceColor">Исходный цвет, от которого нужно получить контрастный.</param>
+        public static Color GenerateContrastColor(Color sourceColor)
         {
-            float hue;
+            // Получаем Hue исходного цвета
+            Color.RGBToHSV(sourceColor, out float sourceHue, out _, out _);
 
-            if (isDefender)
-            {
-                // Холодные тона: синий, голубой, фиолетовый (180–300°)
-                hue = Random.Range(180f, 300f);
-            }
-            else
-            {
-                // Тёплые тона: красный, оранжевый, розовый
-                // Два диапазона для лучшего распределения
-                if (Random.value < 0.5f)
-                {
-                    hue = Random.Range(0f, 60f); // Красный/оранжевый
-                }
-                else
-                {
-                    hue = Random.Range(300f, 360f); // Розовый/пурпурный
-                }
-            }
+            // Противоположный оттенок (Hue + 180°)
+            float oppositeHue = sourceHue + 0.5f;
+            if (oppositeHue > 1f)
+                oppositeHue -= 1f;
 
-            float saturation = Random.Range(minSaturation, maxSaturation);
-            float lightness = Random.Range(minLightness, maxLightness);
+            // Добавляем небольшой разброс ±0.08 (≈ ±30°)
+            float hue = Random.Range(oppositeHue - 0.08f, oppositeHue + 0.08f);
+            hue = Mathf.Repeat(hue, 1f);
 
-            Color color = Color.HSVToRGB(hue / 360f, saturation, lightness);
+            // Пастельные параметры
+            float saturation = Random.Range(0.25f, 0.45f);
+            float value = Random.Range(0.75f, 0.9f);
 
-            // Дополнительная проверка на слишком серые цвета
-            if (IsTooGray(color))
-            {
-                // Если цвет слишком серый, генерируем заново с небольшими корректировками
-                return GenerateTeamColor(isDefender, minSaturation, maxSaturation, minLightness, maxLightness);
-            }
+            Color result = Color.HSVToRGB(hue, saturation, value);
 
-            return color;
+            // Проверка на серость
+            if (IsTooGray(result))
+                return GenerateContrastColor(sourceColor);
+
+            return result;
         }
 
         /// <summary>
-        /// Проверяет, является ли цвет слишком серым (низкий контраст между компонентами).
+        /// Проверяем на серость, и отсекаем слишком серые тона.
         /// </summary>
-        /// <param name="color">Проверяемый цвет</param>
-        /// <returns>true, если цвет слишком серый</returns>
         private static bool IsTooGray(Color color)
         {
-            // Вычисляем разницу между максимальным и минимальным компонентами RGB
             float maxComponent = Mathf.Max(color.r, color.g, color.b);
             float minComponent = Mathf.Min(color.r, color.g, color.b);
-            float colorDifference = maxComponent - minComponent;
-
-            // Если разница меньше порога — цвет воспринимается как серый
-            const float grayThreshold = 0.2f;
-            return colorDifference < grayThreshold;
+            return (maxComponent - minComponent) < 0.2f;
         }
     }
 }

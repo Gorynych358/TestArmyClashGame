@@ -18,6 +18,7 @@ namespace ACT.Scripts
         [SerializeField] private TMP_Text loadingText;
 
         private CancellationTokenSource _cts;
+        public CancellationToken Token => _cts.Token;
         private bool _isFading;
 
         private void Awake()
@@ -30,8 +31,6 @@ namespace ACT.Scripts
             _cts.Cancel();
             _cts.Dispose();
         }
-
-        public CancellationToken Token => _cts.Token;
 
         public UniTask FadeIn() => SafeFade(0f, 1f);
 

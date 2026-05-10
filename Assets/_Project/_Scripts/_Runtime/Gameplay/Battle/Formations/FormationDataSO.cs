@@ -4,17 +4,11 @@ using UnityEngine;
 
 namespace ACT.Scripts
 {
-    [Serializable]
-    public struct FormationCell
-    {
-        public bool HasUnit;
-        public UnitTypes UnitType;
-
-        public static FormationCell Empty => new FormationCell { HasUnit = false, UnitType = UnitTypes.Warlord };
-    }
-
+    // ============================
+    //  Формация которая создаётся в редакторе
+    // ============================
     [CreateAssetMenu(fileName = "FormationDataSO", menuName = "Configs/Battle/FormationDataSO")]
-    public class FormationDataSO : ScriptableObject
+    public class FormationDataSO : ScriptableObject, IFormationData
     {
         [SerializeField] private string _formationName = "NewFormation";
         [SerializeField] private int _columns = 6;
@@ -26,8 +20,8 @@ namespace ACT.Scripts
         public int Columns => _columns;
         public int Rows => _rows;
         public Vector2 CellSpacing => _cellSpacing;
-
-        public IReadOnlyList<FormationCell> Cells => _cells;
+		
+		public IReadOnlyList<FormationCell> Cells => _cells;
 
         public FormationCell GetCell(int column, int row)
         {
@@ -39,10 +33,8 @@ namespace ACT.Scripts
 
         public void SetCell(int column, int row, FormationCell cell)
         {
-            if (!IsValidIndex(column, row))
-                return;
-
-            _cells[row * _columns + column] = cell;
+            if (IsValidIndex(column, row))
+                _cells[row * _columns + column] = cell;
         }
 
         public void SetName(string formationName)
@@ -55,22 +47,16 @@ namespace ACT.Scripts
             columns = Mathf.Max(1, columns);
             rows = Mathf.Max(1, rows);
 
-            if (columns == _columns && rows == _rows && _cells.Length == columns * rows)
-                return;
-
             var newCells = new FormationCell[columns * rows];
+
             for (int y = 0; y < rows; y++)
             {
                 for (int x = 0; x < columns; x++)
                 {
-                    if (x < _columns && y < _rows && _cells != null && _cells.Length == _columns * _rows)
-                    {
+                    if (x < _columns && y < _rows && _cells.Length == _columns * _rows)
                         newCells[y * columns + x] = _cells[y * _columns + x];
-                    }
                     else
-                    {
                         newCells[y * columns + x] = FormationCell.Empty;
-                    }
                 }
             }
 

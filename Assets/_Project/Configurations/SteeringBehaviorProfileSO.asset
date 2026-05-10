@@ -12,13 +12,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6bb7615e5bfdc5948bce2ce4ec9cf4b1, type: 3}
   m_Name: SteeringBehaviorProfileSO
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Scripts.SteeringBehaviorProfile
-  turnSpeed: 3.12
+  turnSpeed: 3
   avoidanceRadius: 1.5
-  separationRadius: 1.98
+  separationRadius: 1.94
   alignmentRadius: 4
   cohesionRadius: 4
-  targetWeight: 0.95
-  avoidanceWeight: 1.5
-  separationWeight: 1.2
-  alignmentWeight: 0.8
-  cohesionWeight: 0
+  targetWeight: 1.52
+  avoidanceWeight: 1.65
+  separationWeight: 1.65
+  alignmentWeight: 0
+  cohesionWeight: 0.72

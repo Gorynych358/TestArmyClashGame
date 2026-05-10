@@ -6,29 +6,37 @@ namespace ACT.Scripts
 {
     public sealed class CoinsView : MonoBehaviour
     {
+        [Header("UI references")]
         [SerializeField] private RectTransform _canvasRoot;
         [SerializeField] private RectTransform _root;
+        [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private TextMeshProUGUI _coinsText;
+        [Header("UI effects container")]
         [SerializeField] private UIVisualEffectsService _uiEffector;
+        [Header("Animation settings")]
+        [SerializeField] private float _showTime = 0.35f;
         [SerializeField] private float _showDelayTime = 0.1f;
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;
 
         private void Awake()
         {
+            _canvasGroup.alpha = 0;
             _shownPos = _root.anchoredPosition;
-            float top = _canvasRoot.rect.yMax;
             // Смещаем панельку с завоёванными монетками выше, чтобы гарантированно было не видно:
-            _hiddenPos = new Vector2(_shownPos.x, top + _root.rect.height * 1.2f);
+            _hiddenPos = new Vector2(_shownPos.x, _shownPos.y - _root.rect.height * 1.2f);
             _root.anchoredPosition = _hiddenPos;
         }
 
         public void Show()
         {
             _root.gameObject.SetActive(true);
-            _root.DOAnchorPos(_shownPos, 0.35f)
+            _root.DOAnchorPos(_shownPos, _showTime)
                     .SetDelay(_showDelayTime)
-                    .SetEase(Ease.OutCubic)
+                    .SetEase(Ease.OutBack)
+                    .SetLink(gameObject);
+            _canvasGroup.DOFade(1, _showTime)
+                    .SetDelay(_showDelayTime)
                     .SetLink(gameObject);
         }
         public void HideInstant()

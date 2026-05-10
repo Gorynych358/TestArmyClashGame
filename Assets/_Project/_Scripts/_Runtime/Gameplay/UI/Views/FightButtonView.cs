@@ -7,13 +7,19 @@ namespace ACT.Scripts
 {
     public sealed class FightButtonView : MonoBehaviour
     {
+        [Header("Fight button")]
+        [SerializeField] private Button _fightButton;
+        [Header("UI references")]
         [SerializeField] private RectTransform _canvasRoot;
         [SerializeField] private RectTransform _root;
-        [SerializeField] private Button _button;
+        [SerializeField] private CanvasGroup _canvasGroup;
+        [Header("Animation settings")]
         [SerializeField] private float _showDelayTime = 0.3f;
-        private const float SHOW_TIME = 0.25f;
+        [SerializeField] private float _showDuration = 0.25f;
+        [SerializeField] private float _hideDuration = 0.25f;
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;
+        private bool _isShown = false;
 
         private void Awake()
         {
@@ -26,48 +32,65 @@ namespace ACT.Scripts
 
         public void Show()
         {
+            if(_isShown)
+                return;
             
-            _root.gameObject.SetActive(true);
-            _root.localScale = Vector3.zero;
-            _root.DOScale(1f, 0.25f)
+            _isShown = true;
+
+            this.gameObject.SetActive(true);
+
+            _canvasGroup.alpha = 0f;
+
+            _canvasGroup.DOFade(1f, _showDuration)
                     .SetDelay(_showDelayTime)
+                    .SetLink(this.gameObject);
+            _root.DOAnchorPosY(_shownPos.y, _showDuration)
                     .SetEase(Ease.OutBack)
-                    .SetLink(gameObject);
+                    .SetDelay(_showDelayTime)
+                    .SetLink(this.gameObject);
         }
         public void HideInstant()
         {
+            _isShown = false;
             _root.gameObject.SetActive(false);
         }
 
         public void SetInteractable(bool value)
         {
-            _button.interactable = value;
+            _fightButton.interactable = value;
         }
 
         public void BindClick(Action onClick)
         {
-            _button.onClick.RemoveAllListeners();
-            _button.onClick.AddListener(() => onClick?.Invoke());
+            _fightButton.onClick.RemoveAllListeners();
+            _fightButton.onClick.AddListener(() => onClick?.Invoke());
         }
 
-        public void HideWithSlide()
+        public void HideAnimated()
         {
-            _root.DOAnchorPos(_hiddenPos, 0.35f)
-                .SetEase(Ease.InBack)
-                .SetLink(gameObject);
+            _isShown = false;
+            _canvasGroup
+                .DOFade(0f, _hideDuration)
+                .SetLink(this.gameObject)
+                .OnComplete(() =>
+                {
+                    this.gameObject.SetActive(false);
+                });
         }
 
         public void ShowWithSlide()
         {
+            _isShown = true;
             _root.gameObject.SetActive(true);
-            _root.DOAnchorPos(_shownPos, 0.35f)
+            _root.DOAnchorPos(_shownPos, _showDuration)
                 .SetEase(Ease.OutBack)
-                .SetLink(gameObject);
+                .SetLink(this.gameObject);
         }
 
         private void OnDisable()
         {
-            DOTween.Kill(gameObject);
+            _isShown = false;
+            DOTween.Kill(this.gameObject);
         }
     }
 }

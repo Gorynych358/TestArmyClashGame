@@ -24,7 +24,7 @@ namespace ACT.Scripts
         public bool IsAttackTarget{get;private set;}
         public IUnitContext CurrentTarget { get; set; }
         public Vector3 MoveDirection{get;set;}
-        public float AttackDistance => 3f;
+        public float AttackDistance => 2f;
     #endregion
     #region PRIVATE FIELDS
         private UnitConfigSO _config;
@@ -85,6 +85,8 @@ namespace ACT.Scripts
         {
             _healthSystem.Initialize(_config.FinalHP);
             IsAttackTarget = true;
+            CurrentTarget = null;
+            MoveDirection = Vector3.zero;
             ChangeState(UnitStates.Idle);
         }
 
@@ -113,7 +115,7 @@ namespace ACT.Scripts
 
         public void Attack()
         {
-            print($"Unit with name {this.name.ToUpper()} attacks unit with name {((Unit)CurrentTarget).name.ToUpper()} ");
+            //print($"Unit with name {this.name.ToUpper()} attacks unit with name {((Unit)CurrentTarget).name.ToUpper()} ");
             _attacker.Attack(this, _config.FinalATK);
         }
 

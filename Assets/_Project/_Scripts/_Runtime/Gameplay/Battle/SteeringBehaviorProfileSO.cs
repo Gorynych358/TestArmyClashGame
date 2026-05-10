@@ -16,19 +16,19 @@ namespace ACT.Scripts
 
         [Tooltip("Минимальная дистанция, на которой юнит начинает уворачиваться от столкновений.")]
         [Range(0.1f, 3f)]
-        public float avoidanceRadius = 1.2f;
+        public float avoidanceRadius = 1.5f;
 
         [Tooltip("Дистанция, на которой юнит начинает раздвигать толпу вокруг себя.")]
         [Range(0.1f, 5f)]
-        public float separationRadius = 1.5f;
+        public float separationRadius = 2.0f;
 
         [Tooltip("Радиус, в котором юнит учитывает направление движения соседей.")]
         [Range(0.5f, 10f)]
-        public float alignmentRadius = 4f;
+        public float alignmentRadius = 4.0f;
 
         [Tooltip("Радиус, в котором юнит стремится держаться ближе к центру группы.")]
         [Range(0.5f, 10f)]
-        public float cohesionRadius = 4f;
+        public float cohesionRadius = 4.0f;
 
 
         [Header("Weights")]

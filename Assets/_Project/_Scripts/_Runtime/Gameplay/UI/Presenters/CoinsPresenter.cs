@@ -26,14 +26,14 @@ namespace ACT.Scripts
 
             _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
             _eventBus.Subscribe<EconomyChangedEvent>(OnEconomyChanged);
-            _eventBus.Subscribe<BattleReadyEvent>(OnBattleReady);
+            _eventBus.Subscribe<BattleStartEvent>(OnBattleStarted);
         }
 
-        private void OnBattleReady(BattleReadyEvent e)
+        private void OnBattleStarted(BattleStartEvent _)
         {
             _economy.BeginBattleSession();
-            _view.Show();
             _view.SetCoins(_economy.BattleEarnings);
+            _view.Show();
         }
 
         private void OnUnitDied(UnitDiedEvent e)
@@ -59,7 +59,7 @@ namespace ACT.Scripts
         {
             _eventBus.Unsubscribe<UnitDiedEvent>(OnUnitDied);
             _eventBus.Unsubscribe<EconomyChangedEvent>(OnEconomyChanged);
-            _eventBus.Unsubscribe<BattleReadyEvent>(OnBattleReady);
+            _eventBus.Unsubscribe<BattleStartEvent>(OnBattleStarted);
         }
     }
 }

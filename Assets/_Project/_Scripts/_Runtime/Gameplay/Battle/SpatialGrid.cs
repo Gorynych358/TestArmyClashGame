@@ -49,10 +49,12 @@ namespace ACT.Scripts
             );
         }
 
-        public List<Unit> GetNeighbors(Vector3 position)
+        public void FillNeighbors(IUnitContext requester, List<Unit> result)
         {
+            result.Clear();
+
+            Vector3 position = requester.Transform.position;
             Vector2Int cell = GetCell(position);
-            List<Unit> result = new List<Unit>(32);
 
             for (int x = -1; x <= 1; x++)
             for (int z = -1; z <= 1; z++)
@@ -60,10 +62,11 @@ namespace ACT.Scripts
                 Vector2Int c = new Vector2Int(cell.x + x, cell.y + z);
 
                 if (_cells.TryGetValue(c, out var list))
-                    result.AddRange(list);
+                {
+                    for (int i = 0; i < list.Count; i++)
+                        result.Add(list[i]);
+                }
             }
-
-            return result;
         }
     }
 }
