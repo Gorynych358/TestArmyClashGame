@@ -1,9 +1,10 @@
 using UnityEngine;
-using UnityEngine.UI;
-using DG.Tweening;
 using System;
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Gameplay.UI.Views;
+using ACT.Runtime.Infrastructure.EventBus;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI.Presenters
 {
     // ===========================
     // PRESENTER

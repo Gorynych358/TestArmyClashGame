@@ -1,6 +1,10 @@
 using System;
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Gameplay.UI.Views;
+using ACT.Runtime.Infrastructure.Economy;
+using ACT.Runtime.Infrastructure.EventBus;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI.Presenters
 {
     public sealed class BattleCompletePresenter : IDisposable
     {

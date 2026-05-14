@@ -1,13 +1,15 @@
 using System.Collections.Generic;
+using ACT.Runtime.Gameplay.Battle;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units.Logic
 {
     public class UnitAICommandSystem : ICommandSystem
     {
         private readonly BattleManager _battle;
         private readonly SteeringBehaviorProfile _profile;
-        private readonly List<Unit> _neighbors = new(64);
+        private readonly List<Unit> _neighbors = new(128);
+
         public UnitAICommandSystem(BattleManager battle, SteeringBehaviorProfile profile)
         {
             _battle = battle;
@@ -16,11 +18,13 @@ namespace ACT.Scripts
 
         public void Update(IUnitContext unit)
         {
+            // --- Обновление цели ---
             if (unit.CurrentTarget == null || !unit.CurrentTarget.IsAttackTarget)
                 unit.CurrentTarget = _battle.GetClosestEnemy(unit);
 
             var target = unit.CurrentTarget;
-            
+
+            // --- Нет цели: стоим, не атакуем ---
             if (target == null)
             {
                 unit.MoveDirection = Vector3.zero;
@@ -28,20 +32,22 @@ namespace ACT.Scripts
                 return;
             }
 
-            Vector3 unitPos = unit.Transform.position;
+            Vector3 unitPos   = unit.Transform.position;
             Vector3 targetPos = target.Transform.position;
 
+            // --- Базовое направление на цель ---
             Vector3 dirToTarget = (targetPos - unitPos).normalized;
-            //Заливаем список соседей через SpatialGrid:
+
+            // --- Получаем соседей через SpatialGrid ---
             _battle.FillNeighbors(unit, _neighbors);
-            
-            //Считаем поправки в направлении движения юнита:
+
+            // --- Steering-компоненты ---
             Vector3 avoidance  = ComputeAvoidance(unit);
             Vector3 separation = ComputeSeparation(unit);
             Vector3 alignment  = ComputeAlignment(unit);
             Vector3 cohesion   = ComputeCohesion(unit);
 
-            // --- Steering: чистое направление ---
+            // --- Итоговое направление ---
             Vector3 steering =
                 dirToTarget   * _profile.targetWeight     +
                 avoidance     * _profile.avoidanceWeight  +
@@ -53,16 +59,23 @@ namespace ACT.Scripts
                 ? steering.normalized
                 : Vector3.zero;
 
-            // --- Сглаживание направления(типа, как на льду) ---
+            // --- Сглаживание поворота ---
             unit.MoveDirection = Vector3.Lerp(
                 unit.MoveDirection,
                 desired,
                 _profile.turnSpeed * Time.deltaTime
             );
 
+            // --- Решение об атаке ---
             float sqrDist = (targetPos - unitPos).sqrMagnitude;
-            unit.CanAttack = sqrDist <= unit.AttackDistance * unit.AttackDistance;
+            float attackRange = unit.AttackDistance * unit.AttackDistance;
+
+            unit.CanAttack = sqrDist <= attackRange;
         }
+
+        // ------------------------------
+        // Steering Behaviors
+        // ------------------------------
 
         private Vector3 ComputeAvoidance(IUnitContext unit)
         {
@@ -73,8 +86,7 @@ namespace ACT.Scripts
 
             foreach (var other in _neighbors)
             {
-                if (other == null)
-                    continue;
+                if (other == null) continue;
 
                 Vector3 diff = selfPos - other.Transform.position;
                 float dist = diff.magnitude;
@@ -89,8 +101,7 @@ namespace ACT.Scripts
             if (count == 0)
                 return Vector3.zero;
 
-            force /= count;
-            return force.normalized;
+            return (force / count).normalized;
         }
 
         private Vector3 ComputeSeparation(IUnitContext unit)
@@ -102,8 +113,7 @@ namespace ACT.Scripts
 
             foreach (var other in _neighbors)
             {
-                if (other == null)
-                    continue;
+                if (other == null) continue;
 
                 Vector3 diff = selfPos - other.Transform.position;
                 float dist = diff.magnitude;
@@ -118,8 +128,7 @@ namespace ACT.Scripts
             if (count == 0)
                 return Vector3.zero;
 
-            force /= count;
-            return force.normalized;
+            return (force / count).normalized;
         }
 
         private Vector3 ComputeAlignment(IUnitContext unit)
@@ -127,12 +136,13 @@ namespace ACT.Scripts
             Vector3 sumDir = Vector3.zero;
             int count = 0;
 
+            Vector3 selfPos = unit.Transform.position;
+
             foreach (var other in _neighbors)
             {
-                if (other == null)
-                    continue;
+                if (other == null) continue;
 
-                float dist = (other.Transform.position - unit.Transform.position).magnitude;
+                float dist = (other.Transform.position - selfPos).magnitude;
                 if (dist > _profile.alignmentRadius)
                     continue;
 
@@ -146,8 +156,7 @@ namespace ACT.Scripts
             if (count == 0)
                 return Vector3.zero;
 
-            sumDir /= count;
-            return sumDir.normalized;
+            return (sumDir / count).normalized;
         }
 
         private Vector3 ComputeCohesion(IUnitContext unit)
@@ -159,8 +168,7 @@ namespace ACT.Scripts
 
             foreach (var other in _neighbors)
             {
-                if (other == null)
-                    continue;
+                if (other == null) continue;
 
                 float dist = (other.Transform.position - selfPos).magnitude;
                 if (dist > _profile.cohesionRadius)
@@ -176,10 +184,9 @@ namespace ACT.Scripts
             center /= count;
             Vector3 toCenter = center - selfPos;
 
-            if (toCenter.sqrMagnitude < 0.0001f)
-                return Vector3.zero;
-
-            return toCenter.normalized;
+            return toCenter.sqrMagnitude > 0.0001f
+                ? toCenter.normalized
+                : Vector3.zero;
         }
     }
 }

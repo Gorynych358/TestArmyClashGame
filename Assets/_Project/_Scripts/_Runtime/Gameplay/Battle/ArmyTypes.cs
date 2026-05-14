@@ -1,4 +1,4 @@
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle
 {
     public enum ArmyTypes
     {

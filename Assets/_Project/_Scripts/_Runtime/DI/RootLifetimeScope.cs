@@ -1,8 +1,13 @@
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
+using ACT.Runtime.Infrastructure;
+using ACT.Runtime.Infrastructure.Audio;
+using ACT.Runtime.Infrastructure.Economy;
+using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.Infrastructure.SceneManagement;
 
-namespace ACT.Scripts.Runtime.DI
+namespace ACT.Runtime.DI
 {
     
     public sealed class RootLifetimeScope : LifetimeScope

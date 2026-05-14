@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT
 {
     [CreateAssetMenu(fileName = "ColorModifier", menuName = "Configs/Unit/Modifiers/Color")]
     public class ColorModifierSO : UnitModifierSO

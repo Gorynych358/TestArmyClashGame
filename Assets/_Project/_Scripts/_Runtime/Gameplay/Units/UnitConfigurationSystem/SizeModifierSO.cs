@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT
 {
     [CreateAssetMenu(fileName = "SizeModifier", menuName = "Configs/Unit/Modifiers/Size")]
     public class SizeModifierSO : UnitModifierSO

@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units.Logic.FSM
 {
     public abstract class BaseUnitState : IState
     {

@@ -1,8 +1,10 @@
 using System;
+using ACT.Runtime.Gameplay.Battle.Formations;
+using ACT.Runtime.Gameplay.Units;
 using UnityEditor;
 using UnityEngine;
 
-namespace ACT.Scripts.Editor
+namespace ACT.Editor
 {
     public class FormationEditorWindow : EditorWindow
     {

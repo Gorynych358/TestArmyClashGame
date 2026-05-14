@@ -1,9 +1,19 @@
 using System.Collections.Generic;
+using ACT.Runtime.Gameplay;
+using ACT.Runtime.Gameplay.Battle;
+using ACT.Runtime.Gameplay.Battle.Formations;
+using ACT.Runtime.Gameplay.UI;
+using ACT.Runtime.Gameplay.UI.Presenters;
+using ACT.Runtime.Gameplay.UI.Views;
+using ACT.Runtime.Gameplay.Units;
+using ACT.Runtime.Gameplay.Units.Executors;
+using ACT.Runtime.Gameplay.Units.Logic;
+using ACT.Runtime.Infrastructure.Economy;
 using UnityEngine;
 using VContainer;
 using VContainer.Unity;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.DI
 {
     public class GameplayLifetimeScope : LifetimeScope
     {
@@ -80,7 +90,7 @@ namespace ACT.Scripts
             builder.Register<IAttackSystem, UnitAttacker>(Lifetime.Singleton);
             builder.Register<IMoveSystem, UnitMover>(Lifetime.Singleton);
             //Scene context entry point:
-            builder.RegisterEntryPoint<GameBootstrap>();
+            builder.RegisterEntryPoint<GameplayBootstrap>();
         }
     }
 }

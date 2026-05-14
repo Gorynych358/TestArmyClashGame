@@ -1,6 +1,6 @@
 using System;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.EventBus
 {
     public interface IEventBus
     {

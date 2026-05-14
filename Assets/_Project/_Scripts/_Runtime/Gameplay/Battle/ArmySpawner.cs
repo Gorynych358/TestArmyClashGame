@@ -1,7 +1,9 @@
 using System.Collections.Generic;
+using ACT.Runtime.Gameplay.Battle.Formations;
+using ACT.Runtime.Gameplay.Units;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle
 {
     // ============================
     //  ARMY SPAWNER

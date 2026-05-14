@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle.Formations
 {
     // ============================
     //  Формация которая создаётся в редакторе

@@ -1,9 +1,9 @@
 using UnityEngine;
+using ACT.Runtime.Gameplay.Battle;
+using ACT.Runtime.Gameplay.Units.Logic.FSM;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units
 {
-    using UnityEngine;
-
     public interface IUnitContext
     {
         ArmyTypes ArmyType { get; }

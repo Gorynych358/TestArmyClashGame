@@ -1,7 +1,8 @@
 using System.Threading;
+using ACT.Runtime.Infrastructure.EventBus;
 using Cysharp.Threading.Tasks;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Extensions
 {
     //Расширение-адаптер для EventBus для использования с UniTask.
     public static class EventBusExtensions

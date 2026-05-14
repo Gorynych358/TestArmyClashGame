@@ -1,7 +1,11 @@
 using UnityEngine;
 using VContainer.Unity;
+using ACT.Runtime.Infrastructure.SceneManagement;
+using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.MainMenu.Views;
+using ACT.Runtime.MainMenu.Presenters;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.MainMenu
 {
     public sealed class MainMenuBootstrap : IStartable
     {

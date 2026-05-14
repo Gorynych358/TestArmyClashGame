@@ -1,5 +1,9 @@
 using System;
-namespace ACT.Scripts
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Gameplay.UI.Views;
+using ACT.Runtime.Infrastructure.EventBus;
+
+namespace ACT.Runtime.Gameplay.UI.Presenters
 {
     public sealed class FightButtonPresenter : IDisposable
     {

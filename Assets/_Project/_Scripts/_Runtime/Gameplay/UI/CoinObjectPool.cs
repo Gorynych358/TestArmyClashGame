@@ -2,7 +2,7 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI
 {
     public class CoinObjectPool : IDisposable
     {

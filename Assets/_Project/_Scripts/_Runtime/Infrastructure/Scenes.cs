@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure
 {
     public static class Scenes
     {

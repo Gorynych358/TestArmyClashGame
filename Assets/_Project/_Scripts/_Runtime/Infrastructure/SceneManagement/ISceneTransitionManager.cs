@@ -1,6 +1,6 @@
 using Cysharp.Threading.Tasks;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.SceneManagement
 {
     public interface ISceneTransitionManager
     {

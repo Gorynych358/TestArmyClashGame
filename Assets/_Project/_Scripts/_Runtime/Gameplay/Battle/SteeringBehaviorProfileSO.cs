@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle
 {
     [CreateAssetMenu(fileName = "SteeringBehaviorProfileSO", menuName = "Configs/Behavior/SteeringBehaviorProfileSO")]
     public class SteeringBehaviorProfile : ScriptableObject

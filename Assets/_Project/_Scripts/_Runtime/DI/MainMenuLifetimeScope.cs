@@ -1,7 +1,10 @@
 using VContainer;
 using VContainer.Unity;
+using ACT.Runtime.MainMenu;
+using ACT.Runtime.MainMenu.Views;
+using ACT.Runtime.MainMenu.Presenters;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.DI
 {
     public class MainMenuLifetimeScope : LifetimeScope
     {

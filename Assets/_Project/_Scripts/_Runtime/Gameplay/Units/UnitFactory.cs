@@ -3,7 +3,7 @@ using VContainer;
 using System.Collections.Generic;
 using VContainer.Unity;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units
 {
     public class UnitFactory : IUnitFactory
     {

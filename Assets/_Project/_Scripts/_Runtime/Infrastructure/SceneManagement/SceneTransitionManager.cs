@@ -2,7 +2,7 @@ using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using System.Threading;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.SceneManagement
 {
     public sealed class SceneTransitionManager : ISceneTransitionManager
     {

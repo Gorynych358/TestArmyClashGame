@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.Economy
 {
     /// <summary>
     /// Тут храним все параметры экономики. 

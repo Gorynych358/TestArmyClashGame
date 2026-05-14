@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle
 {
     /// <summary>
     /// Генератор пастельных цветов и контрастных пастельных цветов.

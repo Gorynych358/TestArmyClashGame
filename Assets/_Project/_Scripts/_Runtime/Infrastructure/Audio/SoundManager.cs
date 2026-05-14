@@ -1,7 +1,7 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.Audio
 {
     public sealed class SoundManager : ISoundManager
     {

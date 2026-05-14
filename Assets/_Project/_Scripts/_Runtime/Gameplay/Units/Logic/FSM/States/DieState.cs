@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units.Logic.FSM.States
 {
     public class DieState : BaseUnitState
     {

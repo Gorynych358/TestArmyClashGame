@@ -1,7 +1,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.Audio
 {
     [CreateAssetMenu(fileName = "AudioLibrary", menuName = "Configs/Audio/AudioLibrary")]
     public class AudioLibrary : ScriptableObject

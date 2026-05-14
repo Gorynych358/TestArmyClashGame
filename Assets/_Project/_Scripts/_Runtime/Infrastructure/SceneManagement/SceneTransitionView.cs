@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using System.Threading;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.SceneManagement
 {
     public sealed class SceneTransitionView : MonoBehaviour
     {

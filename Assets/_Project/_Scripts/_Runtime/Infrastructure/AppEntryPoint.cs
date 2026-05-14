@@ -1,9 +1,10 @@
 using VContainer.Unity;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
-using DG.Tweening;
+using ACT.Runtime.Infrastructure.SceneManagement;
+using ACT.Runtime.Infrastructure.Audio;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure
 {
     public sealed class AppEntryPoint : IStartable
     {
@@ -24,7 +25,7 @@ namespace ACT.Scripts
         public void Start()
         {
             if(Application.isEditor)
-                Debug.Log("Game initialized!");
+                Debug.Log("Application initialized => Start background music => Load main menu scene!");
             else
                 Application.targetFrameRate = 60;
             

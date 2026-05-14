@@ -2,7 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using DG.Tweening;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI.Views
 {
     // ===========================
     // VIEW
@@ -19,7 +19,6 @@ namespace ACT.Scripts
         [SerializeField] private float _showDelayTime = 0.3f;
         [SerializeField] private float _showDuration = 0.25f;
         [SerializeField] private float _hideDuration = 0.25f;
-        [SerializeField] private float _moveOffset = 200f;
 
         private Vector2 _shownPos;
         private Vector2 _hiddenPos;

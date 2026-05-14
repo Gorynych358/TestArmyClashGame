@@ -1,7 +1,11 @@
 using System;
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Gameplay.Battle;
+using ACT.Runtime.Gameplay.UI.Views;
+using ACT.Runtime.Infrastructure.EventBus;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI.Presenters
 {
     public sealed class BattleProgressPresenter : IDisposable
     {

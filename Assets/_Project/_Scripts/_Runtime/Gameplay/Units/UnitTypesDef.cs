@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units
 {
     //Перечисления типов модификаторов.
     //Названия типов просто для удобства, не влияют на логику.

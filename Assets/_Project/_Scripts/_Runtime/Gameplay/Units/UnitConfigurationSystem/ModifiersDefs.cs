@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT
 {
     public enum ShapeModifierType { Cube, Sphere }
 

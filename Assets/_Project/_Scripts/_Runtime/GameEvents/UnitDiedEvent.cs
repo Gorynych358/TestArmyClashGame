@@ -1,6 +1,7 @@
-using UnityEngine;
+using ACT.Runtime.Gameplay.Units;
+using ACT.Runtime.Infrastructure.EventBus;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.GameEvents
 {
     public readonly struct UnitDiedEvent : IEvent
     {

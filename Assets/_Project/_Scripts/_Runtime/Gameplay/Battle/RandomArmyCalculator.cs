@@ -1,8 +1,9 @@
 using System.Collections.Generic;
 using System.Linq;
+using ACT.Runtime.Gameplay.Units;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle
 {
     // ============================
     //  RANDOM ARMY CALCULATOR

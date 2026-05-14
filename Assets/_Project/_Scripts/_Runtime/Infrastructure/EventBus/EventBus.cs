@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.EventBus
 {
     public class EventBus : IEventBus
     {

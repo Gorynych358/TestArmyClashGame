@@ -1,6 +1,7 @@
+using ACT.Runtime.Gameplay.Units;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle.Formations
 {
     // ============================
     //  Формация которая создаётся в рантайме

@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT
 {
     [CreateAssetMenu(fileName = "ModifiersProvider", menuName = "Configs/Unit/ModifiersProvider")]
     public class ModifiersProviderSO : ScriptableObject

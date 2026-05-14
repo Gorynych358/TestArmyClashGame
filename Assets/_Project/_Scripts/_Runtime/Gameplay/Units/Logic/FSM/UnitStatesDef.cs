@@ -1,6 +1,4 @@
-using UnityEngine;
-
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units.Logic.FSM
 {
     //Перечисление состояний юнита:
     public enum UnitStates

@@ -1,4 +1,4 @@
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.Economy
 {
     public interface IEconomyManager
     {

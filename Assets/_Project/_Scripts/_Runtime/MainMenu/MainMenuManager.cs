@@ -1,7 +1,10 @@
 using UnityEngine;
 using Cysharp.Threading.Tasks;
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Infrastructure.SceneManagement;
+using ACT.Runtime.Infrastructure.EventBus;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.MainMenu
 {
     public class MainMenuManager : MonoBehaviour
     {

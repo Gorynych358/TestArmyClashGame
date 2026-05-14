@@ -1,6 +1,7 @@
 using System;
+using ACT.Runtime.Gameplay.Units;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle.Formations
 {
     // ============================
     //  Описание ячейки сетки формации

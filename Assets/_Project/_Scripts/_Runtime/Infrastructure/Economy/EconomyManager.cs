@@ -1,4 +1,7 @@
-namespace ACT.Scripts
+using ACT.Runtime.GameEvents;
+using ACT.Runtime.Infrastructure.EventBus;
+
+namespace ACT.Runtime.Infrastructure.Economy
 {
     public sealed class EconomyManager : IEconomyManager
     {

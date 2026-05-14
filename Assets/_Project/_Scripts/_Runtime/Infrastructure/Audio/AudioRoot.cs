@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Infrastructure.Audio
 {
     public sealed class AudioRoot : MonoBehaviour
     {

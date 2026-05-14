@@ -1,6 +1,7 @@
+using ACT.Runtime.Gameplay.Units;
 using UnityEngine;
 
-namespace ACT.Scripts
+namespace ACT
 {
     [CreateAssetMenu(fileName = "UnitConfigSO", menuName = "Configs/Unit/UnitConfigSO")]
     

@@ -1,4 +1,7 @@
-namespace ACT.Scripts
+using ACT.Runtime.Gameplay.Battle;
+using ACT.Runtime.Infrastructure.EventBus;
+
+namespace ACT.Runtime.GameEvents
 {
     public readonly struct ArmyStatsChangedEvent : IEvent
     {

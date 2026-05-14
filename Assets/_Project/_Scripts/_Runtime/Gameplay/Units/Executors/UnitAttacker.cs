@@ -1,4 +1,4 @@
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Units.Executors
 {
     public class UnitAttacker : IAttackSystem
     {

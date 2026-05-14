@@ -3,7 +3,7 @@ using UnityEngine.UI;
 using DG.Tweening;
 using System;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.MainMenu.Views
 {
     public sealed class PlayButtonView : MonoBehaviour
     {

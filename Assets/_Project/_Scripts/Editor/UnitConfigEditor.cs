@@ -1,7 +1,7 @@
 using UnityEngine;
-    using UnityEditor;
+using UnityEditor;
 
-namespace ACT.Scripts
+namespace ACT.Editor
 {
 
     [CustomEditor(typeof(UnitConfigSO))]

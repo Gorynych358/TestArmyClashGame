@@ -1,7 +1,9 @@
 using UnityEngine;
 using UnityEditor;
+using ACT.Runtime.Gameplay.Battle.Formations;
+using ACT.Runtime.Gameplay.Units;
 
-namespace ACT.Scripts
+namespace ACT.Editor
 {
     [CustomEditor(typeof(FormationDataSO))]
     public class FormationDataSOInspector : UnityEditor.Editor

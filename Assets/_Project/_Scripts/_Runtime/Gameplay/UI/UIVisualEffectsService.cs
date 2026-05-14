@@ -2,7 +2,7 @@ using UnityEngine;
 using DG.Tweening;
 using VContainer;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.UI
 {
     public class UIVisualEffectsService : MonoBehaviour
     {

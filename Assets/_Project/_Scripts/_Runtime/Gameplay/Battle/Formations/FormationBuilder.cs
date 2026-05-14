@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
+using ACT.Runtime.Gameplay.Units;
 
-namespace ACT.Scripts
+namespace ACT.Runtime.Gameplay.Battle.Formations
 {
     // ============================
     //  FORMATION BUILDER
