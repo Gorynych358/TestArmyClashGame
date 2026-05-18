@@ -1,5 +1,4 @@
 using System;
-using UnityEngine;
 
 namespace ACT.Runtime.Gameplay.Units.Executors
 {
@@ -9,7 +8,7 @@ namespace ACT.Runtime.Gameplay.Units.Executors
         public bool IsAlive => Current > 0;
 
         private Action _criticalDamageCallback;
-
+        
         public void Initialize(float maxHealth)
         {
             Current = maxHealth;

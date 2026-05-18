@@ -7,6 +7,9 @@ using ACT.Runtime.GameEvents;
 using ACT.Runtime.Gameplay.Units;
 using ACT.Runtime.Gameplay.Battle.Formations;
 using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.Infrastructure;
+using ACT.Runtime.Gameplay.Battle.Session;
+using ACT.Runtime.GameEvents.UIEvents;
 
 namespace ACT.Runtime.Gameplay.Battle
 {
@@ -21,13 +24,13 @@ namespace ACT.Runtime.Gameplay.Battle
         [SerializeField] private FormationDataSO _invadersFormation;
 
         [Header("Spawn Settings")]
-        [SerializeField] private float _armyPower = 3000f;
         [SerializeField] private Vector3 _defendersSpawnPoint = new(-5, 0, 0);
         [SerializeField] private Vector3 _invadersSpawnPoint = new(5, 0, 0);
 
         private readonly List<Unit> _defenders = new();
         private readonly List<Unit> _invaders = new();
 
+        private ArmyPowerSettingsSO _armyPowerSettings;
         private UnitObjectPool _pool;
         private RandomArmyCalculator _randomArmyCalculator;
         private FormationBuilder _formationBuilder;
@@ -35,7 +38,7 @@ namespace ACT.Runtime.Gameplay.Battle
         private IEventBus _eventBus;
         private SpatialGrid _spatialGrid;
 
-        private BattleSessionData _sessionData;
+        private BattleSession _sessionData;
         private CancellationTokenSource _cts;
 
         private bool _battleActive;
@@ -43,6 +46,7 @@ namespace ACT.Runtime.Gameplay.Battle
     #region INITIALIZATION
 
         public void Initialize(
+            ArmyPowerSettingsSO armyPowerSettingsSO,
             UnitObjectPool pool,
             RandomArmyCalculator randomArmyCalculator,
             FormationBuilder formationBuilder,
@@ -52,6 +56,7 @@ namespace ACT.Runtime.Gameplay.Battle
         {
             _cts = new CancellationTokenSource();
 
+            _armyPowerSettings = armyPowerSettingsSO;
             _pool = pool;
             _pool.InitializePool(10, _poolStorage);
             _randomArmyCalculator = randomArmyCalculator;
@@ -81,7 +86,7 @@ namespace ACT.Runtime.Gameplay.Battle
                 Debug.LogWarning("EventBus is not assigned in BattleManager! Check if the game starts from the correct scene.");
                 return;
             }
-            _eventBus.Subscribe<ChangeDefendersFormationEvent>(OnUpdateDefendersFormation);
+            _eventBus.Subscribe<ChangeFormationClickedEvent>(OnUpdateDefendersFormation);
             _eventBus.Subscribe<FightButtonClickedEvent>(OnBattleStart);
             _eventBus.Subscribe<BattleCompleteNextButtonClickEvent>(OnBattleCompleteNextButtonClicked);
             _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
@@ -109,8 +114,8 @@ namespace ACT.Runtime.Gameplay.Battle
         private async UniTask InitNewBattleSessionAsync()
         {
             _battleActive = false;
-
-            _sessionData = new BattleSessionData(_armyPower);
+            
+            _sessionData = new BattleSession(_armyPowerSettings.ArmyPower);
 
             Color defendersColor = RandomPastelColorGenerator.GeneratePastelColor();
             Color invadersColor = RandomPastelColorGenerator.GenerateContrastColor(defendersColor);
@@ -122,12 +127,11 @@ namespace ACT.Runtime.Gameplay.Battle
 
             _eventBus.Publish(new BattleReadyEvent());
         }
-
     #endregion
 
     #region FORMATION & ARMY BUILDING
 
-        private void OnUpdateDefendersFormation(ChangeDefendersFormationEvent _)
+        private void OnUpdateDefendersFormation(ChangeFormationClickedEvent _)
         {
             RebuildDefendersArmy();
 
@@ -146,19 +150,23 @@ namespace ACT.Runtime.Gameplay.Battle
             var invaders = CreateArmy(ArmyTypes.Invaders, formation, out invadersPower);
             _invaders.AddRange(invaders);
 
-            _sessionData.SetInvadersArmyStats(_invaders.Count, invadersPower);
-            _eventBus.Publish(new ArmyStatsChangedEvent(_sessionData));
-
+            //Устанавливаем мощность и количество юнитов в армии захватчиков:
+            _sessionData.SetArmyStats(ArmyTypes.Invaders, _invaders.Count, invadersPower);
+            
             RebuildDefendersArmy();
 
-            print($"Defenders: {_sessionData.DefendersPower}|{_sessionData.DefendersCount}, " +
-                  $"Invaders: {_sessionData.InvadersPower}|{_sessionData.InvadersCount}");
+            if(Application.isEditor)
+            {
+                var data = _sessionData.GetCurrentData();
+                print($"Defenders: {data.DefendersPower}|{data.DefendersCount}, " +
+                    $"Invaders: {data.InvadersPower}|{data.InvadersCount}");
+            }
         }
 
         private void RebuildDefendersArmy()
         {
             ClearArmy(ArmyTypes.Defenders);
-
+            //Армию защитников выбираем рандомно +/- 20% от целевой мощности армии выбранной в главном меню:
             float basePower = _sessionData.ArmyPower;
             float range = basePower * 0.2f;
             float randomizedPower = basePower + Random.Range(-range, range);
@@ -169,8 +177,9 @@ namespace ACT.Runtime.Gameplay.Battle
             var defenders = CreateArmy(ArmyTypes.Defenders, formation, out float defendersPower);
             _defenders.AddRange(defenders);
 
-            _sessionData.SetDefendersArmyStats(_defenders.Count, defendersPower);
-            _eventBus.Publish(new ArmyStatsChangedEvent(_sessionData));
+            //Устанавливаем мощность и количество юнитов в армии защитников:
+            _sessionData.SetArmyStats(ArmyTypes.Defenders, _defenders.Count, defendersPower);
+            _eventBus.Publish(new ArmyStatsChangedEvent(_sessionData.GetCurrentData()));
         }
 
         private List<Unit> CreateArmy(ArmyTypes armyType, IFormationData formation, out float resultPower)
@@ -202,6 +211,9 @@ namespace ACT.Runtime.Gameplay.Battle
             if (_battleActive)
                 return;
 
+            //Фиксируем начальное состояние армий:
+            _sessionData.FixInitialArmyStats();
+            
             _battleActive = true;
             _eventBus.Publish(new BattleStartEvent());
         }
@@ -218,53 +230,40 @@ namespace ACT.Runtime.Gameplay.Battle
         {
             float newPower;
             int newCount;
-
+            var data = _sessionData.GetCurrentData();
             if (evt.Unit.ArmyType == ArmyTypes.Defenders)
             {
                 _defenders.Remove(evt.Unit);
                 newCount = _defenders.Count;
-                newPower = _sessionData.DefendersPower - evt.Unit.PowerScore;
-                _sessionData.SetDefendersArmyStats(newCount, newPower);
+                newPower = data.DefendersPower - evt.Unit.PowerScore;
             }
             else
             {
                 _invaders.Remove(evt.Unit);
                 newCount = _invaders.Count;
-                newPower = _sessionData.InvadersPower - evt.Unit.PowerScore;
-                _sessionData.SetInvadersArmyStats(newCount, newPower);
+                newPower = data.InvadersPower - evt.Unit.PowerScore;
             }
-
+            
+            newPower = Mathf.Max(0.0f, newPower);
+            _sessionData.SetArmyStats(evt.Unit.ArmyType, newCount, newPower);
+            
             _pool.Return(evt.Unit);
-            _eventBus.Publish(new ArmyStatsChangedEvent(_sessionData));
+            _eventBus.Publish(new ArmyStatsChangedEvent(_sessionData.GetCurrentData()));
 
             CheckBattleEnd();
         }
 
         private void CheckBattleEnd()
         {
-            if (_defenders.Count == 0 && _invaders.Count == 0)
-            {
-                EndBattle(false);
+            if (_defenders.Count > 0 && _invaders.Count > 0)
                 return;
-            }
 
-            if (_defenders.Count == 0)
-            {
-                EndBattle(false);
-                return;
-            }
-
-            if (_invaders.Count == 0)
-            {
-                EndBattle(true);
-                return;
-            }
-        }
-
-        private void EndBattle(bool playerWon)
-        {
+            //Битва окончена:
             _battleActive = false;
-            _eventBus.Publish(new BattleCompleteEvent(playerWon));
+            //Заканчиваем сессию:
+            _sessionData.SessionComplete();
+            
+            _eventBus.Publish(new BattleCompleteEvent(_sessionData.GetFinalData()));
         }
 
     #endregion
@@ -315,30 +314,10 @@ namespace ACT.Runtime.Gameplay.Battle
     #endregion
 
     #region MONOBEHAVIOUR API
-        private void Start()
-        {
-            StartGameplay();
-        }
-
-        private void OnEnable() 
-        {
-            AddListeners();
-        }
-
-        private void OnDisable()
-        {
-            ClearListeners();
-        }
-
-        private void Update()
-        {
-            UpdateGameplay();
-        }
-
-        private void OnDestroy()
-        {
-            CleanUpScene();
-        }
+        private void Start() => StartGameplay();
+        private void OnDisable() => ClearListeners();
+        private void Update() => UpdateGameplay();
+        private void OnDestroy() => CleanUpScene();
     #endregion
 
     #region CLEANUP
@@ -357,7 +336,7 @@ namespace ACT.Runtime.Gameplay.Battle
 
         private void ClearListeners()
         {
-            _eventBus.Unsubscribe<ChangeDefendersFormationEvent>(OnUpdateDefendersFormation);
+            _eventBus.Unsubscribe<ChangeFormationClickedEvent>(OnUpdateDefendersFormation);
             _eventBus.Unsubscribe<FightButtonClickedEvent>(OnBattleStart);
             _eventBus.Unsubscribe<BattleCompleteNextButtonClickEvent>(OnBattleCompleteNextButtonClicked);
             _eventBus.Unsubscribe<UnitDiedEvent>(OnUnitDied);

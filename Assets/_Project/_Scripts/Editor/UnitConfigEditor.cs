@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEditor;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 
 namespace ACT.Editor
 {

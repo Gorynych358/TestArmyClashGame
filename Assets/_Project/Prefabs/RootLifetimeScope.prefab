@@ -873,6 +873,7 @@ MonoBehaviour:
   autoRun: 1
   autoInjectGameObjects: []
   _audioLibrary: {fileID: 11400000, guid: 07f26d8c971b52c48be0abddb0a0995e, type: 2}
+  _armyPowerSettings: {fileID: 11400000, guid: fa864096739b645488e61a698a0ad565, type: 2}
 --- !u!1 &6461625811835247295
 GameObject:
   m_ObjectHideFlags: 0

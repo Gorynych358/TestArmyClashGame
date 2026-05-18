@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ACT.Runtime.Gameplay.Units;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 using UnityEngine;
 
 namespace ACT.Runtime.Gameplay.Battle

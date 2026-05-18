@@ -8,6 +8,8 @@ using ACT.Runtime.Gameplay.Units.Executors;
 using ACT.Runtime.Gameplay.Units.Logic;
 using ACT.Runtime.Gameplay.Units.Logic.FSM;
 using ACT.Runtime.Gameplay.Units.Logic.FSM.States;
+using ACT.Runtime.Gameplay.Units.Animations;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 
 namespace ACT.Runtime.Gameplay.Units
 {
@@ -15,7 +17,7 @@ namespace ACT.Runtime.Gameplay.Units
     {
         [SerializeField] private Transform _modelRoot;
 
-        #region PUBLIC PROPERTIES (IUnitContext)
+    #region PUBLIC PROPERTIES (IUnitContext)
         public ArmyTypes ArmyType { get; set; }
         public Transform ModelRoot => _modelRoot;
         public Transform Transform => transform;
@@ -30,15 +32,16 @@ namespace ACT.Runtime.Gameplay.Units
 
         public int MaxHealth => _config.FinalHP;
 
-        public bool CanAttack { get; set; }
-        public bool IsAttackTarget { get; private set; }
-        public IUnitContext CurrentTarget { get; set; }
-        public Vector3 MoveDirection { get; set; }
-        #endregion
+        public bool CanAttack { get; set; } = false;
+        public bool IsAttackTarget { get; private set; } = true;
+        public IUnitContext CurrentTarget { get; set; } = null;
+        public Vector3 MoveDirection { get; set; } = Vector3.zero;
+    #endregion
 
-        #region PRIVATE FIELDS
+    #region PRIVATE FIELDS
         private UnitConfigSO _config;
 
+        private IUnitAnimationController _animController;
         private IEventBus _eventBus;
         private BattleManager _battleManager;
         private ICommandSystem _commandSystem;
@@ -52,9 +55,9 @@ namespace ACT.Runtime.Gameplay.Units
 
         private bool _isActive;
         private Animator _animator;
-        #endregion
+    #endregion
 
-        #region DEPENDENCY INJECTION
+    #region DEPENDENCY INJECTION
         [Inject]
         public void Construct(
             IEventBus eventBus,
@@ -68,11 +71,20 @@ namespace ACT.Runtime.Gameplay.Units
             _commandSystem = commandSystem;
             _attacker = attackSystem;
             _mover = moveSystem;
+        }
+    #endregion
+
+    #region INITIALIZATION
+        public void Initialize(UnitConfigSO config)
+        {
+            _config = config;
 
             _healthSystem = new UnitHealth();
+            _healthSystem.Initialize(_config.FinalHP);
             _healthSystem.BindZeroHealtCallback(OnCriticalDamageReceived);
 
             _animator = GetComponentInChildren<Animator>();
+            _animController = new UnitAnimationController(_animator);
 
             _stateMachine = new StateMachine();
             _states = new Dictionary<UnitStates, IState>
@@ -83,25 +95,28 @@ namespace ACT.Runtime.Gameplay.Units
                 [UnitStates.Die]     = new DieState(this),
                 [UnitStates.Victory] = new VictoryState(this)
             };
-        }
-        #endregion
-
-        #region INITIALIZATION
-        public void BindConfig(UnitConfigSO config) => _config = config;
-
-        public void Initialize()
-        {
-            _healthSystem.Initialize(_config.FinalHP);
-
-            IsAttackTarget = true;
-            CurrentTarget = null;
-            MoveDirection = Vector3.zero;
 
             ChangeState(UnitStates.Idle);
         }
-        #endregion
+    #endregion
 
-        #region UNITY LIFECYCLE
+    #region RESET UNIT
+        public void ResetUnit()
+        {
+            // Сброс Animator
+            _animator.Rebind();
+            _animator.Update(0f);
+            // Сброс состояния
+            IsAttackTarget = true;
+            CurrentTarget = null;
+            MoveDirection = Vector3.zero;
+            ChangeState(UnitStates.Idle);
+            // Сброс здоровья
+            _healthSystem.Initialize(_config.FinalHP);
+        }
+    #endregion
+
+    #region UNITY LIFECYCLE
         private void OnEnable()
         {
             _eventBus.Subscribe<BattleStartEvent>(OnBattleStarted);
@@ -111,9 +126,9 @@ namespace ACT.Runtime.Gameplay.Units
         {
             _eventBus.Unsubscribe<BattleStartEvent>(OnBattleStarted);
         }
-        #endregion
+    #endregion
 
-        #region GAME LOOP
+    #region GAME LOOP
         private void OnBattleStarted(BattleStartEvent evt)
         {
             _isActive = true;
@@ -123,12 +138,21 @@ namespace ACT.Runtime.Gameplay.Units
         {
             if (_isActive)
                 _commandSystem.Update(this);
-
+            
             _stateMachine.Update(deltaTime);
         }
-        #endregion
+    #endregion
+        
+    #region ANIMATIONS (IUnitContext)
+        public void PlayIdleAnim() => _animController.PlayIdle();
+        public void PlayRunAnim() => _animController.PlayRun();
+        public void PlayAttackAnim() => _animController.PlayAttack();
+        public void PlayDieAnim() => _animController.PlayDie();
 
-        #region BEHAVIOR (IUnitContext)
+        public bool IsAnimationComplete(int hash) => _animController.IsAnimationComplete(hash);
+    #endregion
+
+    #region BEHAVIOR (IUnitContext)
         public void ChangeState(UnitStates type)
         {
             _stateMachine.ChangeState(_states[type]);
@@ -143,9 +167,9 @@ namespace ACT.Runtime.Gameplay.Units
         {
             _attacker.Attack(CurrentTarget as Unit, _config.FinalATK);
         }
-        #endregion
+    #endregion
 
-        #region DAMAGE & DEATH
+    #region DAMAGE & DEATH
         public void ApplyDamage(float damage)
         {
             _healthSystem.TakeDamage(damage);
@@ -164,6 +188,6 @@ namespace ACT.Runtime.Gameplay.Units
         {
             _eventBus.Publish(new UnitDiedEvent(this));
         }
-        #endregion
+    #endregion
     }
 }

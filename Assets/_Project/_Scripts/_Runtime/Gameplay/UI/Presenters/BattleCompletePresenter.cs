@@ -1,5 +1,6 @@
 using System;
 using ACT.Runtime.GameEvents;
+using ACT.Runtime.GameEvents.UIEvents;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Infrastructure.Economy;
 using ACT.Runtime.Infrastructure.EventBus;
@@ -28,9 +29,22 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
 
         private void OnFightComplete(BattleCompleteEvent e)
         {
-            _view.SetStats(10, _economyManager.BattleEarnings);
+            var data = e.SessionData;
+            bool isPlayerWon;
+            int enemyKilled;
+            if(data.DefendersCount > 0)
+            {
+                isPlayerWon = true;
+                enemyKilled = data.InitialInvadersCount;
+            }
+            else
+            {
+                isPlayerWon = false;
+                enemyKilled = data.InitialInvadersCount - data.InvadersCount;
+            }
+            _view.SetStats(enemyKilled, _economyManager.BattleEarnings);
             
-            if (e.IsPlayerWon)
+            if (isPlayerWon)
                 _view.ShowVictory();
             else
                 _view.ShowLose();

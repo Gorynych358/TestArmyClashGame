@@ -58,7 +58,6 @@ namespace ACT.Runtime.Gameplay.Battle
                     unit.ArmyType = armyType;
                     ApplyColor(unit.transform, color);
                     unit.transform.SetPositionAndRotation(worldPos, Quaternion.LookRotation(facing, Vector3.up));
-                    unit.Initialize();
                     unit.name = $"{armyType}_{row}_{col}_{cell.UnitType}";
                     units.Add(unit);
                 }

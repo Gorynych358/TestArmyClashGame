@@ -1,4 +1,4 @@
-using ACT.Runtime.GameEvents;
+using ACT.Runtime.GameEvents.UIEvents;
 using ACT.Runtime.Infrastructure.EventBus;
 using ACT.Runtime.MainMenu.Views;
 

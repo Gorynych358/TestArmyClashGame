@@ -8,9 +8,5 @@ namespace ACT.Runtime.Gameplay.Units.Executors
         {
             ctx.Transform.position += speed * deltaTime * direction;
         }
-        public void ApplyKnockback(IUnitContext ctx, Vector3 direction, float knockbackPower)
-        {
-            
-        }
     }
 }

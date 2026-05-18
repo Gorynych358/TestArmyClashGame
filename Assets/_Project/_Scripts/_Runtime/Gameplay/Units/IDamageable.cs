@@ -1,5 +1,3 @@
-using UnityEngine;
-
 namespace ACT.Runtime.Gameplay.Units
 {
     public interface IDamageable

@@ -2,6 +2,7 @@ using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 using ACT.Runtime.Gameplay.Units;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 
 namespace ACT.Runtime.Gameplay.Battle.Formations
 {

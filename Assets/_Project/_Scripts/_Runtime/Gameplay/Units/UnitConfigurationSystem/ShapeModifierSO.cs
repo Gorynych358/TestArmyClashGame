@@ -1,6 +1,6 @@
 using UnityEngine;
 
-namespace ACT
+namespace ACT.Runtime.Gameplay.Units.UnitConfigurationSystem
 {
     [CreateAssetMenu(fileName = "ShapeModifier", menuName = "Configs/Unit/Modifiers/Shape")]
     public class ShapeModifierSO : UnitModifierSO

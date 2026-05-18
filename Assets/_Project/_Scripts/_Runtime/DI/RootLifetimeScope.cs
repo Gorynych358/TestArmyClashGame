@@ -13,10 +13,13 @@ namespace ACT.Runtime.DI
     public sealed class RootLifetimeScope : LifetimeScope
     {
         [SerializeField] private AudioLibrary _audioLibrary;
+        [SerializeField] private ArmyPowerSettingsSO _armyPowerSettings;
         protected override void Configure(IContainerBuilder builder)
         {
             //Шина событий:
             builder.Register<IEventBus, EventBus>(Lifetime.Singleton);
+            //Дефолтные настройки мощности армии. Регулируются из сцены главного меню:
+            builder.RegisterInstance(_armyPowerSettings);
             //Библиотека игровых звуков:
             builder.RegisterInstance(_audioLibrary);
             //Ссылки на AudioSource для музыки и звуков. И конфиг настроек громкости:

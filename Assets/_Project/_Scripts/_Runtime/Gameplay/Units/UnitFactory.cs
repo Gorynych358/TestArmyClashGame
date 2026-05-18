@@ -2,6 +2,7 @@ using UnityEngine;
 using VContainer;
 using System.Collections.Generic;
 using VContainer.Unity;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 
 namespace ACT.Runtime.Gameplay.Units
 {
@@ -46,7 +47,7 @@ namespace ACT.Runtime.Gameplay.Units
 
             SetupModel(model.transform, config);
             
-            unit.BindConfig(config);
+            unit.Initialize(config);
 
             return unit;
         }

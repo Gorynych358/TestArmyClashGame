@@ -8,9 +8,7 @@ namespace ACT.Runtime.Gameplay.Units.Logic.FSM.States
 
         public override void Enter()
         {
-            var animator = context.Transform.GetComponent<Animator>();
-            if (animator != null)
-                animator.SetTrigger("Victory");
+            
         }
     }
 }

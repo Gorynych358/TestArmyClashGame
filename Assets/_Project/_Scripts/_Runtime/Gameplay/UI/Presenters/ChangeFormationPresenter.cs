@@ -3,6 +3,7 @@ using System;
 using ACT.Runtime.GameEvents;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.GameEvents.UIEvents;
 
 namespace ACT.Runtime.Gameplay.UI.Presenters
 {
@@ -38,7 +39,6 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
 
         private void OnInvadersFormationReady(BattleReadyEvent _)
         {
-            Debug.Log("Show change formation button: ");
             _view.SetInteractable(true);
             _view.Show();
         }
@@ -46,7 +46,7 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
         private void OnChangeFormationClicked()
         {
             _view.SetInteractable(false);
-            _eventBus.Publish(new ChangeDefendersFormationEvent());
+            _eventBus.Publish(new ChangeFormationClickedEvent());
         }
 
         public void Dispose()

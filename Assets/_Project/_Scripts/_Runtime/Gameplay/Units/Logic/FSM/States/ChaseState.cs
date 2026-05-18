@@ -6,6 +6,9 @@ namespace ACT.Runtime.Gameplay.Units.Logic.FSM.States
     {
         public ChaseState(IUnitContext context) : base(context) { }
 
+        public override void Enter() => context.PlayRunAnim();
+        
+
         public override void Update(float deltaTime)
         {
             if (context.MoveDirection.Equals(Vector3.zero))

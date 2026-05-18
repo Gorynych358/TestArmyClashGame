@@ -10,11 +10,14 @@ namespace ACT.Runtime.DI
     {
         protected override void Configure(IContainerBuilder builder)
         {
+            //MainMenu logic
             builder.RegisterComponentInHierarchy<MainMenuManager>();
-            //UI view:
+            //UI views:
             builder.RegisterComponentInHierarchy<PlayButtonView>();
-            //UI presenter:
+            builder.RegisterComponentInHierarchy<SelectArmyPowerView>();
+            //UI presenters:
             builder.Register<PlayButtonPresenter>(Lifetime.Singleton);
+            builder.Register<SelectArmyPowerPresenter>(Lifetime.Singleton);
             //Scene context entry point:
             builder.RegisterEntryPoint<MainMenuBootstrap>();
         }

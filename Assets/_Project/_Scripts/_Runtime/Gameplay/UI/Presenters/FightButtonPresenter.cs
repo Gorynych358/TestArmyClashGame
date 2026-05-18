@@ -1,5 +1,6 @@
 using System;
 using ACT.Runtime.GameEvents;
+using ACT.Runtime.GameEvents.UIEvents;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Infrastructure.EventBus;
 
@@ -24,10 +25,10 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
             _view.BindClick(OnButtonClicked);
 
             _eventBus.Subscribe<BattleReadyEvent>(OnBattleReady);
-            _eventBus.Subscribe<ChangeDefendersFormationEvent>(OnChageFormationEvent);
+            _eventBus.Subscribe<ChangeFormationClickedEvent>(OnChageFormationEvent);
         }
 
-        private void OnChageFormationEvent(ChangeDefendersFormationEvent _)
+        private void OnChageFormationEvent(ChangeFormationClickedEvent _)
         {
             _view.SetInteractable(false);
         }
@@ -47,7 +48,7 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
         public void Dispose()
         {
             _eventBus.Unsubscribe<BattleReadyEvent>(OnBattleReady);
-            _eventBus.Unsubscribe<ChangeDefendersFormationEvent>(OnChageFormationEvent);
+            _eventBus.Unsubscribe<ChangeFormationClickedEvent>(OnChageFormationEvent);
         }
     }
 }

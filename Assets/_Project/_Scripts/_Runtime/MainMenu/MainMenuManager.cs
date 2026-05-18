@@ -3,6 +3,7 @@ using Cysharp.Threading.Tasks;
 using ACT.Runtime.GameEvents;
 using ACT.Runtime.Infrastructure.SceneManagement;
 using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.GameEvents.UIEvents;
 
 namespace ACT.Runtime.MainMenu
 {

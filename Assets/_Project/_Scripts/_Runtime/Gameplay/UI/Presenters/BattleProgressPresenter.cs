@@ -1,9 +1,7 @@
 using System;
 using ACT.Runtime.GameEvents;
-using ACT.Runtime.Gameplay.Battle;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Infrastructure.EventBus;
-using UnityEngine;
 
 namespace ACT.Runtime.Gameplay.UI.Presenters
 {
@@ -31,7 +29,7 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
 
         private void OnArmyStatsChanged(ArmyStatsChangedEvent evt)
         {
-            BattleSessionData data = evt.SessionData;
+            var data = evt.SessionData;
 
             float defendersPower = data.DefendersPower;
             float invadersPower = data.InvadersPower;
@@ -44,13 +42,7 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
 
             _view.SetStats(data.DefendersCount, data.InvadersCount, fill);
         }
-
-        private (float defendersPower, float invadersPower) 
-            RecalculatePowers(float defendersPower, float invadersPower )
-        {
-            
-            return (defendersPower, invadersPower);
-        }
+        
         public void Dispose()
         {
             _eventBus.Unsubscribe<ArmyStatsChangedEvent>(OnArmyStatsChanged);

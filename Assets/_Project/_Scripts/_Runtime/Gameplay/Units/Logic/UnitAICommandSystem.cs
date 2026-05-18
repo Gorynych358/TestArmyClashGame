@@ -34,7 +34,7 @@ namespace ACT.Runtime.Gameplay.Units.Logic
 
             Vector3 unitPos   = unit.Transform.position;
             Vector3 targetPos = target.Transform.position;
-
+            
             // --- Базовое направление на цель ---
             Vector3 dirToTarget = (targetPos - unitPos).normalized;
 
@@ -47,7 +47,7 @@ namespace ACT.Runtime.Gameplay.Units.Logic
             Vector3 alignment  = ComputeAlignment(unit);
             Vector3 cohesion   = ComputeCohesion(unit);
 
-            // --- Итоговое направление ---
+            // --- Итоговое направление с поправками ---
             Vector3 steering =
                 dirToTarget   * _profile.targetWeight     +
                 avoidance     * _profile.avoidanceWeight  +

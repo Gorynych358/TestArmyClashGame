@@ -6,6 +6,7 @@ using ACT.Runtime.Gameplay.UI.Presenters;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Gameplay.Units;
 using ACT.Runtime.Infrastructure.EventBus;
+using ACT.Runtime.Infrastructure;
 
 namespace ACT.Runtime.Gameplay
 {
@@ -13,14 +14,16 @@ namespace ACT.Runtime.Gameplay
     {
         //Services:
         private readonly IEventBus _eventBus;
-
-        //Gameplay:
+        //Gameplay scene manager:
+        private readonly GameplayManager _gameplayManager;
+        //Battle manager:
         private readonly BattleManager _battleManager;
         private readonly SpatialGrid _spatialGrid;
         private readonly RandomArmyCalculator _randomArmyCalculator;
         private readonly FormationBuilder _formationBuilder;
         private readonly ArmySpawner _armySpawner;
         private readonly UnitObjectPool _unitPool;
+        private readonly ArmyPowerSettingsSO _armyPowerSettings;
         //UI:
         private readonly BattleProgressView _battleProgressView;
         private readonly CoinsView _coinsView;
@@ -34,6 +37,7 @@ namespace ACT.Runtime.Gameplay
         private readonly BattleCompletePresenter _battleCompletePresenter;
 
         public GameplayBootstrap(
+            ArmyPowerSettingsSO armyPowerSettingsSO,
             IEventBus eventBus,
             BattleManager battleManager,
             RandomArmyCalculator randomArmyCalculator, 
@@ -53,6 +57,7 @@ namespace ACT.Runtime.Gameplay
             BattleCompletePresenter battleCompletePresenter
             )
         {
+            _armyPowerSettings = armyPowerSettingsSO;
             _eventBus = eventBus;
             _battleManager = battleManager;
             _randomArmyCalculator = randomArmyCalculator;
@@ -79,20 +84,12 @@ namespace ACT.Runtime.Gameplay
             _fightButtonPresenter.BindView(_fightButtonView);
             _changeFormationPresenter.BindView(_changeFormationView);
             _battleCompletePresenter.BindView(_battleCompleteView);
-            Debug.Log("GameplayBootstrap initialized." +
-            " Event bus = " + (_eventBus != null ? "injected" : "null") + 
-            ", BattleManager = " + (_battleManager != null ? "injected" : "null") + 
-            ", RandomArmyCalculator = " + (_randomArmyCalculator != null ? "injected" : "null") + 
-            ", FormationBuilder = " + (_formationBuilder != null ? "injected" : "null") + 
-            ", ArmySpawner = " + (_armySpawner != null ? "injected" : "null") + 
-            ", UnitPool = " + (_unitPool != null ? "injected" : "null") + 
-            ", SpatialGrid = " + (_spatialGrid != null ? "injected" : "null"));
-            _battleManager.Initialize(_unitPool, _randomArmyCalculator,
+            _battleManager.Initialize(_armyPowerSettings, _unitPool, _randomArmyCalculator,
             _formationBuilder, _armySpawner, _eventBus, _spatialGrid);
             if(Application.isEditor)
             {
-                Debug.Log("GameBootstrap started and initialized all systems.");
-                Debug.Log("BattleManager initialized with all dependencies.");
+                Debug.Log("GameBootstrap started -> all systems initialized. -> " + 
+                            "BattleManager initialized with all dependencies.");
             }
         }
     }

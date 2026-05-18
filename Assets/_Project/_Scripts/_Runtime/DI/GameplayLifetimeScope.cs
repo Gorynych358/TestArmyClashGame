@@ -8,6 +8,7 @@ using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Gameplay.Units;
 using ACT.Runtime.Gameplay.Units.Executors;
 using ACT.Runtime.Gameplay.Units.Logic;
+using ACT.Runtime.Gameplay.Units.UnitConfigurationSystem;
 using ACT.Runtime.Infrastructure.Economy;
 using UnityEngine;
 using VContainer;
@@ -50,7 +51,10 @@ namespace ACT.Runtime.DI
             builder.RegisterInstance(prefabsMap);
             builder.RegisterInstance(_steeringProfile);
             builder.RegisterInstance(_economyProfile);
-
+            
+            //Gameplay scene manager:
+            builder.RegisterComponentInHierarchy<GameplayManager>();
+            //Battle manager:
             builder.RegisterComponentInHierarchy<BattleManager>();
             
             // UI coins pool dependencies:

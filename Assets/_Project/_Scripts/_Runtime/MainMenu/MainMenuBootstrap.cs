@@ -15,7 +15,9 @@ namespace ACT.Runtime.MainMenu
         
         //UI:
         private readonly PlayButtonView _playButtonView;
+        private readonly SelectArmyPowerView _selectArmyPowerView;
         private readonly PlayButtonPresenter _playButtonPresenter;
+        private readonly SelectArmyPowerPresenter _selectArmyPowerPresenter;
         
         //Main menu logic layer
         private readonly MainMenuManager _mainMenuManager;
@@ -25,7 +27,9 @@ namespace ACT.Runtime.MainMenu
             IEventBus eventBus,
             MainMenuManager mainMenuManager,
             PlayButtonView playButtonView,
-            PlayButtonPresenter playButtonPresenter
+            PlayButtonPresenter playButtonPresenter,
+            SelectArmyPowerView selectArmyPowerView,
+            SelectArmyPowerPresenter selectArmyPowerPresenter
             )
         {
             _sceneTransitionManager = sceneTransition;
@@ -33,13 +37,19 @@ namespace ACT.Runtime.MainMenu
             _mainMenuManager = mainMenuManager;
             _playButtonView = playButtonView; 
             _playButtonPresenter = playButtonPresenter; 
+            _selectArmyPowerView = selectArmyPowerView;
+            _selectArmyPowerPresenter = selectArmyPowerPresenter;
         }
 
         public void Start()
         {
             _playButtonPresenter.BindView(_playButtonView);
+            _selectArmyPowerPresenter.BindView(_selectArmyPowerView);
             _mainMenuManager.Initialize(_sceneTransitionManager, _eventBus);
-            Debug.Log("MainMenuBootstrap started and initialized all systems.");
+            if(Application.isEditor)
+            {
+                Debug.Log("MainMenuBootstrap started -> all systems initialized.");
+            }
         }
     }
 }

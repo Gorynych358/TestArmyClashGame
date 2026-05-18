@@ -67,7 +67,8 @@ namespace ACT.Runtime.Gameplay.Units
                 UnityEngine.Object.Destroy(unit.gameObject);
                 return;
             }
-
+            
+            unit.ResetUnit(); // Сброс состояния юнита перед возвратом в пул
             unit.gameObject.SetActive(false);
             unit.transform.parent = _poolStorage;
             queue.Enqueue(unit);

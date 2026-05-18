@@ -6,6 +6,8 @@ namespace ACT.Runtime.Gameplay.Units.Logic.FSM.States
     {
         public IdleState(IUnitContext context) : base(context) { }
 
+        public override void Enter() => context.PlayIdleAnim();
+
         public override void Update(float deltaTime)
         {
             if (context.MoveDirection != Vector3.zero)

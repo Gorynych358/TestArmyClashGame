@@ -24,5 +24,14 @@ namespace ACT.Runtime.Gameplay.Units
         void Move(Vector3 direction, float deltaTime);
         void Attack();
         void DispatchDeadEvent();
+
+        // ================================
+        //  АНИМАЦИИ
+        // ================================
+        void PlayIdleAnim();
+        void PlayRunAnim();
+        void PlayAttackAnim();
+        void PlayDieAnim();
+        bool IsAnimationComplete(int hash);
     }
 }

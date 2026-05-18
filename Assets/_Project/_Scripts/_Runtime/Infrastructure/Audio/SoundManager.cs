@@ -21,7 +21,9 @@ namespace ACT.Runtime.Infrastructure.Audio
 
         public void PlaySound(AudioClip clip)
         {
-            if (!_settings.SoundEnabled || clip == null) return;
+            if (!_settings.SoundEnabled || clip == null) 
+                return;
+                
             _sfx.volume = _settings.SfxVolume;
             _sfx.clip = clip;
             _sfx.Play();
