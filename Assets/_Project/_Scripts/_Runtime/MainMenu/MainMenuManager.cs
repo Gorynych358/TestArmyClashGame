@@ -16,7 +16,6 @@ namespace ACT.Runtime.MainMenu
             _sceneManager = sceneManager;
             _eventBus = eventBus;
             _eventBus.Subscribe<PlayButtonClickedEvent>(OnPlayButtonClicked);
-            print("MainMenuManager initialized with scene transition manager and event bus.");
         }
 
         private void OnDestroy()

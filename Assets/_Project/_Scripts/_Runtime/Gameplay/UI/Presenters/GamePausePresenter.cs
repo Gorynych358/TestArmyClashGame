@@ -1,5 +1,4 @@
 using System;
-using ACT.Runtime.GameEvents;
 using ACT.Runtime.GameEvents.UIEvents;
 using ACT.Runtime.Gameplay.UI.Views;
 using ACT.Runtime.Infrastructure.EventBus;
@@ -28,10 +27,10 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
             _view.BindContinue(OnContinueClicked);
             _view.BindMainMenu(OnMainMenuClicked);
 
-            _eventBus.Subscribe<PauseButtonPressedEvent>(OnPause);
+            _eventBus.Subscribe<PauseButtonPressedEvent>(OnPausePressed);
         }
 
-        private void OnPause(PauseButtonPressedEvent evt)
+        private void OnPausePressed(PauseButtonPressedEvent evt)
         {
             _view.ShowAnimated();
         }
@@ -50,7 +49,7 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
 
         public void Dispose()
         {
-            _eventBus.Unsubscribe<PauseButtonPressedEvent>(OnPause);
+            _eventBus.Unsubscribe<PauseButtonPressedEvent>(OnPausePressed);
         }
     }
 }

@@ -94,6 +94,7 @@ Assets/_Project/_Scripts/_Runtime/
  Gameplay/
   GameplayBootstrap.cs
   GameplayManager.cs
+  GameplayStates.cs
   UI/
    CoinObjectPool.cs
    Presenters/

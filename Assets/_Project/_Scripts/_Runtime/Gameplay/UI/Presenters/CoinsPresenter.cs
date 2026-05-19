@@ -25,7 +25,6 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
         public void BindView(CoinsView view)
         {
             _view = view;
-            _view.HideInstant();
             _view.SetCoins(_economy.GetCoinsAmount());
 
             _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
@@ -37,7 +36,6 @@ namespace ACT.Runtime.Gameplay.UI.Presenters
         {
             _economy.BeginBattleSession();
             _view.SetCoins(_economy.BattleEarnings);
-            _view.Show();
         }
 
         private void OnUnitDied(UnitDiedEvent e)

@@ -51,7 +51,7 @@ namespace ACT.Runtime.DI
             builder.RegisterInstance(prefabsMap);
             builder.RegisterInstance(_steeringProfile);
             builder.RegisterInstance(_economyProfile);
-            
+
             //Gameplay scene manager:
             builder.RegisterComponentInHierarchy<GameplayManager>();
             //Battle manager:
@@ -68,12 +68,16 @@ namespace ACT.Runtime.DI
             
             builder.RegisterComponentInHierarchy<UIVisualEffectsService>();
             //UI views:
+            builder.RegisterComponentInHierarchy<GameControlView>();
+            builder.RegisterComponentInHierarchy<GamePauseView>();
             builder.RegisterComponentInHierarchy<BattleProgressView>();
             builder.RegisterComponentInHierarchy<CoinsView>();
             builder.RegisterComponentInHierarchy<FightButtonView>();
             builder.RegisterComponentInHierarchy<ChangeFormationView>();
             builder.RegisterComponentInHierarchy<BattleCompleteView>();
             //UI presenters:
+            builder.Register<GameControlPresenter>(Lifetime.Singleton);
+            builder.Register<GamePausePresenter>(Lifetime.Singleton);
             builder.Register<BattleProgressPresenter>(Lifetime.Singleton);
             builder.Register<CoinsPresenter>(Lifetime.Singleton);
             builder.Register<FightButtonPresenter>(Lifetime.Singleton);

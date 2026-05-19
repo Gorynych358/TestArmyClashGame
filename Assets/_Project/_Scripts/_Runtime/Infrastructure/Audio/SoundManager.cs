@@ -19,7 +19,7 @@ namespace ACT.Runtime.Infrastructure.Audio
             ApplySettings();
         }
 
-        public void PlaySound(AudioClip clip)
+        public void PlaySound(AudioClip clip = null)
         {
             if (!_settings.SoundEnabled || clip == null) 
                 return;
@@ -35,6 +35,22 @@ namespace ACT.Runtime.Infrastructure.Audio
             _music.volume = _settings.MusicVolume;
             _music.loop = true;
             _music.clip = clip;
+            _music.Play();
+        }
+
+        public void PauseMusic()
+        {
+            if(_music.clip == null)
+                return;
+            
+            _music.Pause();
+        }
+
+        public void ResumeMusic()
+        {
+            if(_music.clip == null || _music.isPlaying)
+                return;
+            
             _music.Play();
         }
 

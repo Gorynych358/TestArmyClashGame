@@ -24,17 +24,20 @@ namespace ACT.Runtime.Gameplay.UI.Views
         [SerializeField] private float _showDelayTime = 0.15f;
         [SerializeField] private float _animDuration = 0.35f;
 
-        private Vector2 _hiddenPos;
+        private Vector2 _hiddenLeftPos;
         private Vector2 _shownPos;
+        private Vector2 _hiddenRightPos;
 
         private void Awake()
         {
-            float screenHeight = _canvasRoot.rect.height;
+            float screenWidth = _canvasRoot.rect.width;
+            float centerY = 0f;
 
-            _shownPos = _root.anchoredPosition;
-            _hiddenPos = new Vector2(_shownPos.x, screenHeight + _root.rect.height * 1.2f);
+            _hiddenLeftPos = new Vector2(-screenWidth, centerY);
+            _shownPos = new Vector2(0f, centerY);
+            _hiddenRightPos = new Vector2(screenWidth, centerY);
 
-            _root.anchoredPosition = _hiddenPos;
+            _root.anchoredPosition = _hiddenLeftPos;
             _canvasGroup.alpha = 0f;
             gameObject.SetActive(false);
         }
@@ -43,7 +46,7 @@ namespace ACT.Runtime.Gameplay.UI.Views
         {
             gameObject.SetActive(false);
             _canvasGroup.alpha = 0f;
-            _root.anchoredPosition = _hiddenPos;
+            _root.anchoredPosition = _hiddenLeftPos;
         }
 
         public void BindContinue(Action onClick)
@@ -63,16 +66,17 @@ namespace ACT.Runtime.Gameplay.UI.Views
             gameObject.SetActive(true);
 
             _canvasGroup.alpha = 0f;
-            _root.anchoredPosition = _hiddenPos;
+            _root.anchoredPosition = _hiddenLeftPos;
 
             _canvasGroup
-                .DOFade(1f, 0.25f)
+                .DOFade(1f, _animDuration)
+                .SetUpdate(true)
                 .SetDelay(_showDelayTime)
-                .SetEase(Ease.OutCubic)
                 .SetLink(gameObject);
 
             _root
                 .DOAnchorPos(_shownPos, _animDuration)
+                .SetUpdate(true)
                 .SetDelay(_showDelayTime)
                 .SetEase(Ease.OutBack)
                 .SetLink(gameObject);
@@ -81,13 +85,14 @@ namespace ACT.Runtime.Gameplay.UI.Views
         public void HideAnimated()
         {
             _canvasGroup
-                .DOFade(0f, 0.2f)
-                .SetEase(Ease.InCubic)
+                .DOFade(0f, _animDuration)
+                .SetUpdate(true)
                 .SetLink(gameObject);
 
             _root
-                .DOAnchorPos(_hiddenPos, _animDuration)
-                .SetEase(Ease.InBack)
+                .DOAnchorPos(_hiddenRightPos, _animDuration)
+                .SetUpdate(true)
+                .SetEase(Ease.InCirc)
                 .SetLink(gameObject)
                 .OnComplete(() => gameObject.SetActive(false));
         }

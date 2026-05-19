@@ -15,6 +15,7 @@ namespace ACT.Runtime.Gameplay.UI.Views
         [SerializeField] private RectTransform _root;
         [Header("Animation settings")]
         [SerializeField] private float _showDelayTime = 0f;
+        [SerializeField] private float _showDuration = 0.35f;
         [SerializeField] private float _animDuration = 0.25f;
         private const float SHOW_TIME = 0.3f;
         private Vector2 _shownPos;
@@ -32,7 +33,8 @@ namespace ACT.Runtime.Gameplay.UI.Views
         public void Show()
         {
             _root.gameObject.SetActive(true);
-            _root.DOAnchorPos(_shownPos, SHOW_TIME)
+            _root.anchoredPosition = _hiddenPos;
+            _root.DOAnchorPos(_shownPos, _showDuration)
                     .SetDelay(_showDelayTime)
                     .SetEase(Ease.OutBack)
                     .SetLink(gameObject);

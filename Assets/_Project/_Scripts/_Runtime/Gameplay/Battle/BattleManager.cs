@@ -64,18 +64,17 @@ namespace ACT.Runtime.Gameplay.Battle
             _armySpawner = armySpawner;
             _spatialGrid = spatialGrid;
             _eventBus = eventBus;
-            print($"BattleManager: EventBus is null == {_eventBus == null}");
-            AddListeners();
             if(Application.isEditor)
-                print("BattleManager initialized!");
+                Debug.Log("BattleManager initialized!");
         }
 
     #endregion
 
     #region GAME LOOP
 
-        private void StartGameplay()
+        public void StartBattle()
         {
+            AddListeners();
             InitNewBattleSessionAsync().Forget();
         }
 
@@ -92,7 +91,7 @@ namespace ACT.Runtime.Gameplay.Battle
             _eventBus.Subscribe<UnitDiedEvent>(OnUnitDied);
         }
 
-        private void UpdateGameplay()
+        public void UpdateGameplay(float deltaTime)
         {
             if (!_battleActive)
                 return;
@@ -101,10 +100,10 @@ namespace ACT.Runtime.Gameplay.Battle
             _spatialGrid.Build(_defenders, _invaders);
 
             for (int i = _defenders.Count - 1; i >= 0; i--)
-                _defenders[i].Tick(Time.deltaTime);
+                _defenders[i].Tick(deltaTime);
 
             for (int i = _invaders.Count - 1; i >= 0; i--)
-                _invaders[i].Tick(Time.deltaTime);
+                _invaders[i].Tick(deltaTime);
         }
 
     #endregion
@@ -134,8 +133,8 @@ namespace ACT.Runtime.Gameplay.Battle
         private void OnUpdateDefendersFormation(ChangeFormationClickedEvent _)
         {
             RebuildDefendersArmy();
-
-            DOVirtual.DelayedCall(1.0f, () =>
+            //Без особой необходимости, симулируем нагрузку от генерации:
+            DOVirtual.DelayedCall(0.8f, () =>
                 _eventBus.Publish(new BattleReadyEvent())
             );
         }
@@ -158,7 +157,7 @@ namespace ACT.Runtime.Gameplay.Battle
             if(Application.isEditor)
             {
                 var data = _sessionData.GetCurrentData();
-                print($"Defenders: {data.DefendersPower}|{data.DefendersCount}, " +
+                Debug.Log($"Defenders: {data.DefendersPower}|{data.DefendersCount}, " +
                     $"Invaders: {data.InvadersPower}|{data.InvadersCount}");
             }
         }
@@ -314,24 +313,27 @@ namespace ACT.Runtime.Gameplay.Battle
     #endregion
 
     #region MONOBEHAVIOUR API
-        private void Start() => StartGameplay();
-        private void OnDisable() => ClearListeners();
-        private void Update() => UpdateGameplay();
-        private void OnDestroy() => CleanUpScene();
+        private void OnDisable() => ClearListeners();  
     #endregion
 
     #region CLEANUP
-        private void CleanUpScene()
+        public void DisposeScene()
         {
             _battleActive = false;
-            _cts.Cancel();
+            try
+            {
+                _cts?.Cancel();
+            }
+            finally
+            {
+                _cts?.Dispose();
+                _cts = null;
+            }
 
             ClearListeners();
 
             ClearArmy(ArmyTypes.Defenders);
             ClearArmy(ArmyTypes.Invaders);
-
-            _cts.Dispose();
         }
 
         private void ClearListeners()

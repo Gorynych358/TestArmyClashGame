@@ -35,6 +35,12 @@ namespace ACT.Runtime.Gameplay.UI.Views
             _canvasGroup.alpha = 0f;
         }
 
+        public void SetInteractable(bool value)
+        {
+            _backButton.interactable = value;
+            _pauseButton.interactable = value;
+        }
+
         public void ShowAnimated()
         {
             gameObject.SetActive(true);
@@ -48,12 +54,16 @@ namespace ACT.Runtime.Gameplay.UI.Views
 
         public void ShowBackButton()
         {
+            gameObject.SetActive(true);
+            _canvasGroup.alpha = 1;
             _backButton.gameObject.SetActive(true);
             _pauseButton.gameObject.SetActive(false);
         }
 
         public void ShowPauseButton()
         {
+            gameObject.SetActive(true);
+            _canvasGroup.alpha = 1;
             _backButton.gameObject.SetActive(false);
             _pauseButton.gameObject.SetActive(true);
         }

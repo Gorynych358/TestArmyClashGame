@@ -31,6 +31,16 @@ namespace ACT.Runtime.Gameplay.UI.Views
         private Vector2 _shownPos;
         private Vector2 _hiddenRightPos;
 
+        private void Awake()
+        {
+            float screenWidth = _canvasRoot.rect.width;
+            float centerY = 0f;
+
+            _hiddenLeftPos = new Vector2(-screenWidth, centerY);
+            _shownPos = new Vector2(0f, centerY);
+            _hiddenRightPos = new Vector2(screenWidth, centerY);
+        }
+
         public void HideInstant()
         {
             gameObject.SetActive(false);
@@ -71,13 +81,6 @@ namespace ACT.Runtime.Gameplay.UI.Views
         private void ShowInternal()
         {
             gameObject.SetActive(true);
-
-            float screenWidth = _canvasRoot.rect.width;
-            float centerY = 0f;
-
-            _hiddenLeftPos = new Vector2(-screenWidth, centerY);
-            _shownPos = new Vector2(0f, centerY);
-            _hiddenRightPos = new Vector2(screenWidth, centerY);
 
             _canvasGroup.alpha = 0f;
             _root.anchoredPosition = _hiddenLeftPos;
