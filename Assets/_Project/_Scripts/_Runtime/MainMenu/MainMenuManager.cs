@@ -16,6 +16,10 @@ namespace ACT.Runtime.MainMenu
             _sceneManager = sceneManager;
             _eventBus = eventBus;
             _eventBus.Subscribe<PlayButtonClickedEvent>(OnPlayButtonClicked);
+            if(Application.isEditor)
+            {
+                Debug.Log("MainMenuManager initialized.");
+            }
         }
 
         private void OnDestroy()

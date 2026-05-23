@@ -74,7 +74,6 @@ namespace ACT.Runtime.Infrastructure.EventBus
                 catch (Exception ex)
                 {
                     Debug.LogError($"Exception in event handler for {typeof(T)}: {ex.Message}");
-                    Debug.LogException(ex);
                 }
             }
         }

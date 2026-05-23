@@ -6,6 +6,7 @@ using ACT.Runtime.Infrastructure.Audio;
 using ACT.Runtime.Infrastructure.Economy;
 using ACT.Runtime.Infrastructure.EventBus;
 using ACT.Runtime.Infrastructure.SceneManagement;
+using ACT.Runtime.Infrastructure.DebugUtils;
 
 namespace ACT.Runtime.DI
 {
@@ -28,6 +29,9 @@ namespace ACT.Runtime.DI
             builder.Register<ISoundManager, SoundManager>(Lifetime.Singleton);
             //Вьюха смены сцен. Затемнение экрана + прогресс бар загрузки сцены:
             builder.RegisterComponentInHierarchy<SceneTransitionView>();
+            //Performance overlay:
+            builder.RegisterComponentInHierarchy<PerformanceOverlayView>();
+            builder.RegisterEntryPoint<PerformanceOverlayPresenter>();
             //Менеджер перехода между сценами. Асинхронная загрузка сцен + UniTask-и:
             builder.Register<ISceneTransitionManager, SceneTransitionManager>(Lifetime.Singleton);
             //Экономика игры, монетки, ресурсы и т.п.:

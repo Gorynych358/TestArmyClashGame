@@ -26,11 +26,43 @@ namespace ACT.Runtime.Infrastructure
         {
             if(Application.isEditor)
                 Debug.Log("Application initialized => Start background music => Load main menu scene!");
-            else
-                Application.targetFrameRate = 60;
+            
+            ApplyGlobalSettings();
             
             _soundManager.PlayMusic(_audioLibrary.GetClip("BackgroundMusicLoop"));
             _sceneTransitionManager.LoadMainMenu().Forget();
+        }
+
+        private void ApplyGlobalSettings()
+        {
+            if (Application.isEditor)
+                return;
+
+            // --- Экран ---
+            Screen.sleepTimeout = SleepTimeout.NeverSleep;
+            Screen.fullScreen = true;
+
+            // --- FPS / VSync ---
+            QualitySettings.vSyncCount = 0;      // Unity-VSync OFF
+            Application.targetFrameRate = 60;    // стабильный FPS
+
+            // --- Сенсор ---
+            Input.multiTouchEnabled = false;
+            Input.simulateMouseWithTouches = false;
+
+            // --- Ориентация ---
+            Screen.orientation = ScreenOrientation.Portrait;
+
+            // --- Физика не используется, отключаем ---
+            Physics.simulationMode = SimulationMode.Script;
+            Physics2D.simulationMode = SimulationMode2D.Script;
+
+            // --- Тайминги ---
+            Time.fixedDeltaTime = 1f;      // минимальная нагрузка
+            Time.maximumDeltaTime = 0.5f;  // защита от фризов
+
+            // --- Фоновые загрузки ---
+            Application.backgroundLoadingPriority = ThreadPriority.High;
         }
     }
 }

@@ -12,6 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0b52d62f705db5c4aaf2b867251d67f3, type: 3}
   m_Name: ArmyPowerSettingsSO
   m_EditorClassIdentifier: Assembly-CSharp::ACT.Runtime.Infrastructure.ArmyPowerSettingsSO
-  _minPower: 300
-  _maxPower: 100000
-  _armyPower: 100000
+  _minPower: 0
+  _maxPower: 300000
+  _armyPower: 38000

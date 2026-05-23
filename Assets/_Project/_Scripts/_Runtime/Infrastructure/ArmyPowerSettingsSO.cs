@@ -6,7 +6,7 @@ namespace ACT.Runtime.Infrastructure
     public sealed class ArmyPowerSettingsSO : ScriptableObject
     {
         private const int DEFAULT_MIN = 0;
-        private const int DEFAULT_MAX = 100000;
+        private const int DEFAULT_MAX = 300000;
         private const int DEFAULT_POWER = 300;
 
         [Header("Config (read-only)")]

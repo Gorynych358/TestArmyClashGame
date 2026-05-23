@@ -64,6 +64,7 @@ namespace ACT.Runtime.Gameplay.Battle
             _armySpawner = armySpawner;
             _spatialGrid = spatialGrid;
             _eventBus = eventBus;
+            
             if(Application.isEditor)
                 Debug.Log("BattleManager initialized!");
         }

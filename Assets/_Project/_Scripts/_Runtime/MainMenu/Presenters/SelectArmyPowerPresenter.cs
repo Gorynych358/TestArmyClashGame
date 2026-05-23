@@ -11,7 +11,7 @@ namespace ACT.Runtime.MainMenu.Presenters
 		private readonly ArmyPowerSettingsSO _settings;
 		private SelectArmyPowerView _view;
 
-		private const int WARNING_THRESHOLD = 30000;
+		private const int WARNING_THRESHOLD = 53000;
 
 		public SelectArmyPowerPresenter(ArmyPowerSettingsSO settings)
 		{

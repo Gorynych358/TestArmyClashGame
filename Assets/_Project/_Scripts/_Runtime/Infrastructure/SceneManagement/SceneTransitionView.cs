@@ -84,11 +84,12 @@ namespace ACT.Runtime.Infrastructure.SceneManagement
 
             while (t < duration)
             {
+
                 token.ThrowIfCancellationRequested();
 
                 t += Time.deltaTime;
                 group.alpha = Mathf.Lerp(from, to, t / duration);
-
+                
                 await UniTask.Yield(PlayerLoopTiming.Update, token);
             }
 

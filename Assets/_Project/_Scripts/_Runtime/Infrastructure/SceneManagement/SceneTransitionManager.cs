@@ -1,6 +1,7 @@
 using Cysharp.Threading.Tasks;
 using UnityEngine.SceneManagement;
 using System.Threading;
+using UnityEngine;
 
 namespace ACT.Runtime.Infrastructure.SceneManagement
 {
@@ -39,12 +40,11 @@ namespace ACT.Runtime.Infrastructure.SceneManagement
             }
 
             _view.UpdateProgress(1f);
-            await UniTask.Delay(300, cancellationToken: token);
 
             op.allowSceneActivation = true;
 
             await UniTask.WaitUntil(() => op.isDone, cancellationToken: token);
-
+            
             _view.HideLoading();
 
             await _view.FadeOut().AttachExternalCancellation(token);

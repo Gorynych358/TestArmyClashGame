@@ -38,7 +38,10 @@ namespace ACT.Runtime.DI
         {
             var configMap = new Dictionary<UnitTypes, UnitConfigSO>();
             foreach (var cfg in _configs)
+            {
+                cfg.RecalculatePowerScore(); // пересчёт при старте сцены
                 configMap[cfg.UnitType] = cfg;
+            }
 
             var prefabsMap = new Dictionary<string, GameObject>
             {
