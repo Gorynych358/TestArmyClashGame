@@ -1,116 +1,194 @@
-# TestArmyClushGame
+# Test Army Clash Game
 
-## О проекте
+![Cover Screenshot](Docs/Images/cover.png)
 
-`TestArmyClushGame` — это мобильный игровой прототип в жанре автобатлер в стиле VooDoo, реализованный на Unity. Цель проекта — демонстрация гибкой, модульной архитектуры с чётким разделением слоёв. 
+Демонстрационный Unity-проект автобаттлера, созданный как showcase современной архитектуры игрового приложения.
 
-## Ключевые особенности
+Проект демонстрирует:
 
-- Сцена главного меню с выбором силы армии и кнопкой "Играть"
-- Асинхронная загрузка сцен с затемнением и индикатором прогресса
-- DI через `VContainer` и явное разделение на глобальные и сценовые зависимости
-- Событийная шина `EventBus` для общения между менеджерами и UI
-- Генерация бойцов и расстановка боевых формаций
-- Боевая логика с обновлением юнитов, столкновениями через `SpatialGrid` и системой смерти юнитов
+- Clean Architecture
+- Dependency Injection (VContainer)
+- Event-Driven Architecture
+- MVP UI
+- FSM AI
+- Data Driven Design
+- ScriptableObject-конфигурации
+- Editor Tooling для геймдизайнеров
+- Высокую производительность при большом количестве юнитов
 
-## Архитектура
+---
 
-Проект разделён на следующие слои:
+## Демонстрация
 
-- `Infrastructure` — базовые сервисы, переходы сцен, аудио и экономика
-- `DI` — конфигурация зависимостей для каждой сцены
-- `MainMenu` — логика главного меню, UI-презентеры и вьюхи
-- `Gameplay` — основная игровая сцена, менеджеры боя и управление состоянием
-- `GameEvents` — события игры
+### Бой
 
-### Сценарии запуска
+![Combat GIF](Docs/Gifs/combat.gif)
 
-- `EntryPointScene` — стартовая сцена проекта, в которой инициализируется `AppEntryPoint`. С этой сцены должна запускаться игра.
-- `MainMenuScene` — сцена главного меню с выбором желаемой мощности армий. Армия захватчиков примерно соответствует желаемой мощности, армия защитников +/- 20% от желаемой. Рандомно меняется на игровом экране.
-- `GameplayScene` — игровая сцена
+### Интерфейс
 
-### Основной поток
+![UI GIF](Docs/Gifs/ui.gif)
+
+---
+
+## Технологии
+
+| Технология | Назначение |
+|------------|------------|
+| Unity | Игровой движок |
+| VContainer | Dependency Injection |
+| UniTask | Асинхронность |
+| DoTween | Анимации |
+| ScriptableObject | Конфигурация данных |
+| EventBus | Слабая связность систем |
+
+---
+
+## Особенности проекта
+
+### Слабосвязная архитектура
+
+Слои приложения изолированы друг от друга и взаимодействуют через типобезопасную EventBus-систему.
+
+### Чистая игровая логика
+
+Основная игровая логика реализована в Pure C# классах с минимальной зависимостью от Unity API.
+
+### Расширяемая архитектура юнитов
+
+Логика принятия решений, состояния и реализация поведения разделены на отдельные слои.
+
+### Editor Tooling
+
+Проект содержит собственные инструменты редактора для:
+
+- создания формаций;
+- настройки конфигураций;
+- просмотра итоговых статов юнитов.
+
+---
+
+## Архитектура приложения
 
 ```mermaid
 flowchart TD
-    AppEntryPoint -->|Play music + load menu|PerfomanceOverlay|SceneTransitionManager
-    SceneTransitionManager --> MainMenuScene
-    MainMenuScene --> MainMenuLifetimeScope
-    MainMenuLifetimeScope --> MainMenuBootstrap
-    MainMenuBootstrap --> PlayButtonPresenter
-    PlayButtonPresenter --> PlayButtonView
-    PlayButtonView -->|click| EventBus
-    EventBus --> MainMenuManager
-    MainMenuManager --> SceneTransitionManager
-    SceneTransitionManager --> GameplayScene
-    GameplayScene --> GameplayLifetimeScope
-    GameplayLifetimeScope --> GameplayBootstrap
-    GameplayBootstrap --> GameplayManager
-    GameplayBootstrap --> BattleManager
+
+RootLifetimeScope
+--> AppEntryPoint
+
+AppEntryPoint
+--> MainMenuScene
+
+MainMenuScene
+--> GameplayScene
+
+GameplayScene
+--> GameplayManager
+
+GameplayManager
+--> BattleManager
 ```
 
-## Основные модули
+---
 
-### `Assets/_Project/_Scripts/_Runtime/Infrastructure`
+## Архитектура юнитов
 
-- `AppEntryPoint.cs` — старт приложения, воспроизведение фоновой музыки, загрузка меню
-- `SceneTransitionManager.cs` — асинхронная загрузка сцен с прогрессом
-- `EventBus` — простая потокобезопасная шина событий
-- `Audio` — управление музыкой и звуковыми эффектами
-- `Economy` — экономическая подсистема
+```mermaid
+flowchart TD
 
-### `Assets/_Project/_Scripts/_Runtime/DI`
+UnitAICommandSystem
+--> FSM
 
-- `RootLifetimeScope.cs` — глобальные синглтоны и сервисы приложения
-- `MainMenuLifetimeScope.cs` — регистрация компонентов главного меню
-- `GameplayLifetimeScope.cs` — регистрация игровых сервисов, UI, спавнеров и менеджеров
+FSM
+--> Unit
 
-### `Assets/_Project/_Scripts/_Runtime/MainMenu`
+Unit
+--> UnitMover
 
-- `MainMenuBootstrap.cs` — сборка и инициализация UI-презентеров
-- `MainMenuManager.cs` — обработка перехода в игровой режим
-- `Views/` — визуальные компоненты меню
-- `Presenters/` — привязка логики к UI
+Unit
+--> UnitAttacker
 
-### `Assets/_Project/_Scripts/_Runtime/Gameplay`
+Unit
+--> UnitHealth
+```
 
-- `GameplayBootstrap.cs` — точка входа для сцены Gameplay
-- `GameplayManager.cs` — управление состоянием игры и цикл обновления
-- `Battle/BattleManager.cs` — организация боя, формирование армий и запуск столкновений
-- `Units/` — системы юнитов, фабрика, пул объектов, логика искусственного интеллекта
-- `UI/` — игровые UI-вьюхи и презентеры
+---
 
-## Структура папок проекта
+## Скриншоты
 
-- `Assets/_Project/_Scripts/_Runtime/DI`
-- `Assets/_Project/_Scripts/_Runtime/Infrastructure`
-- `Assets/_Project/_Scripts/_Runtime/MainMenu`
-- `Assets/_Project/_Scripts/_Runtime/Gameplay`
-- `Assets/_Project/_Scripts/_Runtime/GameEvents`
-- `Assets/_Project/_Scripts/Editor`
+### Игровой процесс
 
-## Важные классы и службы
+![Gameplay](Docs/Images/gameplay.png)
 
-- `EventBus` — центральный посредник событий между сценами и сервисами
-- `IStartable` Bootstrap-классы — инициализируют сцену и связывают UI
-- `SpatialGrid` — ускоряет поиск соседних юнитов на поле боя
-- `ArmySpawner` — создаёт экземпляры юнитов и раскрашивает их
-- `FormationBuilder` — формирует расположение войск по заданной мощности
-- `CoinObjectPool` и `UnitObjectPool` — пуллы для повторного использования объектов
+### Массовое сражение
 
-## Зависимости
+![Battle](Docs/Images/battle.png)
 
-Проект использует следующие пакеты:
+### Редактор формаций
 
-- `com.unity.render-pipelines.universal`
-- `com.unity.ugui`
-- `jp.hadashikick.vcontainer` — DI-контейнер VContainer
-- `com.cysharp.unitask` — UniTask для асинхронной логики
-- `DG.Tweening` — DOTween для анимации UI
+![Formation Editor](Docs/Images/formation_editor.png)
 
-## Как открыть и запустить
+### Производительность
 
-1. Откройте `TestArmyClushGame.slnx` или директорию проекта в Unity Editor.
-2. Убедитесь, что пакетный кэш загрузил внешние зависимости.
-3. Откройте сцену `EntryPointScene` и запустите игру.
-4. На главном меню нажмите `Play` для перехода в `GameplayScene`.
+![Performance](Docs/Images/performance.png)
+
+---
+
+## Производительность
+
+Результаты стресс-тестирования:
+
+- До 1000 одновременно активных юнитов
+- Около 30 FPS на low-end Android устройстве
+
+Основной bottleneck:
+
+- Unity Animator
+
+Потенциальные направления дальнейшей оптимизации:
+
+- GPU Animation
+- Animation Baking
+- ECS
+- Job System
+
+---
+
+## Структура проекта
+
+```text
+Runtime
+├── DI
+├── Infrastructure
+├── Gameplay
+├── MainMenu
+├── GameEvents
+
+Editor
+├── FormationEditorWindow
+├── FormationDataSOInspector
+└── UnitConfigSOEditor
+```
+
+---
+
+## Подробная документация
+
+Подробное описание архитектуры находится в файле:
+
+👉 [ARCHITECTURE.md](ARCHITECTURE.md)
+
+---
+
+## Запуск проекта
+
+Открыть сцену:
+
+Scenes/EntryPointScene
+
+и нажать Play.
+
+---
+
+## Цель проекта
+
+Проект создан как демонстрация подходов к построению масштабируемой, тестируемой и производительной архитектуры мобильной игры на Unity.
